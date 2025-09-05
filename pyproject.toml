@@ -10,6 +10,16 @@ packages = [{include = "gestion_cartera", from = "src"}]
 python = "^3.13"
 python-dotenv = "^1.1.1"
 python-decouple = "^3.8"
+greenlet = "3.2.3"
+numpy = "2.3.2"
+pandas = "2.3.1"
+pyodbc = "5.2.0"
+python-dateutil = "2.9.0.post0"
+pytz = "2025.2"
+six = "1.17.0"
+sqlalchemy = "2.0.42"
+typing-extensions = "4.14.1"
+tzdata = "2025.2"
 
 [build-system]
 requires = ["poetry-core"]

@@ -4,12 +4,10 @@ version = "0.1.0"
 description = ""
 authors = ["Kevin Pérez García <econ.perez.garcia.k@gmail.com>"]
 readme = "README.md"
+packages = [{include = "gestion_cartera", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.13"
-
-[tool.poetry]
-packages = [{include = "gestion_cartera", from = "src"}]
 
 [build-system]
 requires = ["poetry-core"]

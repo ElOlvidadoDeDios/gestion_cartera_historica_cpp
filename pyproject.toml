@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "gestion_cartera", from = "src"}]
 
 [tool.poetry.dependencies]
-python = "^3.13"
+python = "3.12.10"
 python-dotenv = "^1.1.1"
 python-decouple = "^3.8"
 greenlet = "3.2.3"
@@ -20,6 +20,7 @@ six = "1.17.0"
 sqlalchemy = "2.0.42"
 typing-extensions = "4.14.1"
 tzdata = "2025.2"
+zenml = {extras = ["server"], version = "^0.84.3"}
 
 [build-system]
 requires = ["poetry-core"]

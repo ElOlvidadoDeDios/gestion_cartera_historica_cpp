@@ -1,0 +1,9 @@
+db:
+  upstream:
+    user: ${oc.env:DB_UPSTREAM_USER}
+    pwd: ${oc.env:DB_UPSTREAM_PWD}
+    server: ${oc.env:DB_UPSTREAM_SERVER}
+    db: ${oc.env:DB_UPSTREAM_DATABASE}
+  downstream:
+    server: ${oc.env:DB_DOWNSTREAM_SERVER}
+    db: ${oc.env:DB_DOWNSTREAM_DATABASE}

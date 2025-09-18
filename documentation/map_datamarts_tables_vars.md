@@ -57,11 +57,6 @@ En monto.
         - programado: sí, calculable en Power BI (calcblPBI)
         - meta: no
 
-- Repago -> monto -> day -> real (`inital/__init__.py` y `incremental/__init__.py`)
-- Repago -> monto -> day -> programado (`initial/__init__.py` y `incremental/__init__.py`)
-- Repago -> monto -> month -> real (calculable en Power BI)
-- Repago -> monto -> month -> programado (calculable en Power BI)
-
 *Mora*
 
 En monto.

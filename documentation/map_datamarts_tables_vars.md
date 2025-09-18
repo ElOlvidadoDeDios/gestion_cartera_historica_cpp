@@ -41,22 +41,6 @@ Tanto en cantidad como en monto.
         - proyectado: sí, calculable en Power BI (calcblPBI)
         - meta: sí, manuable en SQL (manublSQL)
 
-Por un lado,
-* Colocación -> cantidad -> day -> real (`inital/__init__.py` y `incremental/__init__.py`)
-* Colocación -> cantidad -> day -> proyectado (manual en SQL Server)
-* Colocación -> cantidad -> day -> meta (manual en SQL Server)
-* Colocación -> cantidad -> month -> real (calculable en Power BI)
-* Colocación -> cantidad -> month -> proyectado (calculable en Power BI)
-* Colocación -> cantidad -> month -> meta (manual en SQL Server)
-
-Por otro lado,
-* Colocación -> monto -> day -> real (`inital/__init__.py` y `incremental/__init__.py`)
-* Colocación -> monto -> day -> proyectado (manual en SQL Server)
-* Colocación -> monto -> day -> meta (manual en SQL Server)
-* Colocación -> monto -> month -> real (calculable en Power BI)
-* Colocación -> monto -> month -> proyectado (calculable en Power BI)
-* Colocación -> monto -> month -> meta (manual en SQL Server)
-
 *Repago*
 
 En monto.

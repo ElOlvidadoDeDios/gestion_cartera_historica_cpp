@@ -33,27 +33,29 @@ Tanto en cantidad como en monto.
 * Variable de flujo
 * Temporalidades:
     * day (on_date):
-        - real: sí, calculable (calcbl)
-        - proyectado: sí, manuable (manual)
-        - meta: sí, manuable (manual)
+        - real: sí, calculable en SQL (calcblSQL)
+        - proyectado: sí, manuable en SQL (manublSQL)
+        - meta: sí, manuable en SQL (manublSQL)
     * month (at_date):
         - real: sí, calculable en Power BI (calcblPBI)
         - proyectado: sí, calculable en Power BI (calcblPBI)
-        - meta: sí, manuable (manual)
+        - meta: sí, manuable en SQL (manublSQL)
 
-- Colocación -> cantidad -> day -> real (`inital/__init__.py` y `incremental/__init__.py`)
-- Colocación -> cantidad -> day -> proyectado (manual en SQL Server)
-- Colocación -> cantidad -> day -> meta (manual en SQL Server)
-- Colocación -> cantidad -> month -> real (calculable en Power BI)
-- Colocación -> cantidad -> month -> proyectado (calculable en Power BI)
-- Colocación -> cantidad -> month -> meta (manual en SQL Server)
+Por un lado,
+* Colocación -> cantidad -> day -> real (`inital/__init__.py` y `incremental/__init__.py`)
+* Colocación -> cantidad -> day -> proyectado (manual en SQL Server)
+* Colocación -> cantidad -> day -> meta (manual en SQL Server)
+* Colocación -> cantidad -> month -> real (calculable en Power BI)
+* Colocación -> cantidad -> month -> proyectado (calculable en Power BI)
+* Colocación -> cantidad -> month -> meta (manual en SQL Server)
 
-- Colocación -> monto -> day -> real (`inital/__init__.py` y `incremental/__init__.py`)
-- Colocación -> monto -> day -> proyectado (manual en SQL Server)
-- Colocación -> monto -> day -> meta (manual en SQL Server)
-- Colocación -> monto -> month -> real (calculable en Power BI)
-- Colocación -> monto -> month -> proyectado (calculable en Power BI)
-- Colocación -> monto -> month -> meta (manual en SQL Server)
+Por otro lado,
+* Colocación -> monto -> day -> real (`inital/__init__.py` y `incremental/__init__.py`)
+* Colocación -> monto -> day -> proyectado (manual en SQL Server)
+* Colocación -> monto -> day -> meta (manual en SQL Server)
+* Colocación -> monto -> month -> real (calculable en Power BI)
+* Colocación -> monto -> month -> proyectado (calculable en Power BI)
+* Colocación -> monto -> month -> meta (manual en SQL Server)
 
 *Repago*
 
@@ -63,8 +65,8 @@ En monto.
 * Variable de flujo
 * Temporalidades:
     * day (on_date):
-        - real: sí, calculable (calcbl)
-        - programado: sí, calculable (calcbl)
+        - real: sí, calculable en SQL (calcblSQL)
+        - programado: sí, calculable en SQL (calcblSQL)
         - meta: no
     * month (at_date):
         - real: sí, calculable en Power BI (calcblPBI)
@@ -75,6 +77,22 @@ En monto.
 - Repago -> monto -> day -> programado (`initial/__init__.py` y `incremental/__init__.py`)
 - Repago -> monto -> month -> real (calculable en Power BI)
 - Repago -> monto -> month -> programado (calculable en Power BI)
+
+*Mora*
+
+En monto.
+
+* Variable de hecho
+* Variable stock
+* Temporalidades
+    * day(on_date):
+        * real: sí, calculable en Python (calcblPYTHON)
+        * programado/proyectado: no
+        * meta: no
+    * month(at_date):
+        * real: sí, calculable en SQL (calcblSQL)
+        * programado/proyectado: no
+        * meta: sí, manuable en Power BI (manublPBI)
 
 
 ### Tablas del DataMart Estratégico

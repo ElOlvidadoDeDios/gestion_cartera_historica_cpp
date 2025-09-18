@@ -1,19 +1,64 @@
 # DataMart Estratégico al Primer Nivel de Agrupación (Asesores)
 
+---
+
+## Colocación
+
+### Respecto a la cantidad
+
+Vía programación:
+
+* Colocación -> cantidad -> day -> real
+    * [ ] `inital/__init__.py`
+    * [ ] `incremental/__init__.py`
+* Colocación -> cantidad -> month -> real
+    * [ ] calculable en Power BI
+* Colocación -> cantidad -> month -> proyectado
+    * [ ] calculable en Power BI
+
+Manualmente:
+
+* [ ] Colocación -> cantidad -> day -> proyectado (manual en SQL Server)
+* [ ] Colocación -> cantidad -> day -> meta (manual en SQL Server)
+* [ ] Colocación -> cantidad -> month -> meta (manual en SQL Server)
+
+### Respecto al monto
+
+Vía programación:
+
+* Colocación -> monto -> day -> real
+    * [ ] `inital/__init__.py`
+    * [ ] `incremental/__init__.py`
+
+* Colocación -> monto -> month -> real
+    * calculable en Power BI
+* Colocación -> monto -> month -> proyectado
+    * calculable en Power BI
+
+Manualmente:
+
+* Colocación -> monto -> day -> proyectado
+    * SQL Server
+* Colocación -> monto -> day -> meta
+    * SQL Server
+* Colocación -> monto -> month -> meta
+    * SQL Server
+
+---
+
 ## Mora
 
 Vía programación:
 
-* [ ] Mora -> monto -> day   -> real
+* Mora -> monto -> day   -> real (Nota. No necesario calcular la mora de cada día)
     - [ ] `day/__init__.py`
     - [ ] `month/__init__.py`
-
-    Nota. No necesario calcular la mora de cada día.
-
-* [ ] Mora -> monto -> month -> real
+* Mora -> monto -> month -> real
     - [ ] `vars_stock/__init__.py`
 
 Manualmente:
 
 * Mora -> monto -> month -> meta
     - Power BI
+
+---

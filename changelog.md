@@ -46,6 +46,23 @@ Manualmente:
 
 ---
 
+## Repago
+
+Vía programación:
+
+* Repago -> monto -> day -> real
+    * [ ] `inital/__init__.py`
+    * [ ] `incremental/__init__.py`
+* Repago -> monto -> day -> programado
+    * [ ] `inital/__init__.py`
+    * [ ] `incremental/__init__.py`
+* Repago -> monto -> month -> real
+    * calculable en Power BI
+* Repago -> monto -> month -> programado
+    * calculable en Power BI
+
+---
+
 ## Mora
 
 Vía programación:

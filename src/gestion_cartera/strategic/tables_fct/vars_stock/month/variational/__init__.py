@@ -4,6 +4,8 @@ from pathlib import Path
 from sqlalchemy import text
 import pandas as pd
 from datetime import date
+from gestion_cartera.core.utils import load_config
+config = load_config()
 
 #############################
 ### EXTRACT
@@ -41,25 +43,19 @@ df = pd.read_sql(query, engine_upstream)
 ### TRANSFORM
 #############################
 
-df.drop(columns=["Asesor"], inplace=True)
+# Ninguna
 
 #############################
 ### LOAD
 #############################
 
-# Obtener la fecha actual
-fecha_hoy = date.today().strftime("%Y-%m-%d")
-
-# Eliminar registros de hoy
-with engine_downstream.begin() as conn:
-	conn.execute(
-		text("DELETE FROM fct_stock_real WHERE CAST(Fecha AS DATE) = :fecha"),
-		{"fecha": fecha_hoy}
-	)
+###=============================
+### Variación incremental
+###=============================
 
 # Insertar registros actuales de hoy
-df_stock_real_cartera_moras.to_sql(
-    "fct_stock_real", con=engine_downstream, if_exists="append", index=False
+df.to_sql(
+    'fct_stock_month_caclbl', con=engine_downstream, if_exists="replace", index=False
 )
 
 ###=============================

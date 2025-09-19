@@ -13,7 +13,7 @@
     * [x] `IdSAgencia`
 
 * Python
-    * [ ] `Asesor`
+    * [x] `Asesor`
 ---
 
 ### Variables de las Tablas de Hechos

@@ -5,9 +5,30 @@
 * Primera unidad de agrupamiento: asesor
 * Segunda unidad de agrupamiento: agencia
 
-## Tablas y Variables del DataMart Estratégico
+## Variables del DataMart Estratégico
 
-### Variables del DataMart Estratégico
+### Variables de Dimensiones
+
+**Dimensión Asesor**
+
+- Identificador del asesor
+    - Proporcionado por nuestro core crediticio (SICOOP)
+- Identificador del periodo
+- Nombre completo
+    - Nombles y apellidos del asesor
+- Nombre corto del asesor
+    - Alias del asesor
+- Cargo
+    - Dado que hay también recuperadores
+- Identificador de la agencia del asesor
+
+**Dimensión Agencia**
+
+Dado que son pocas agencias, esta dimensión será implementada manualmente en Power BI.
+
+**Dimensión Calendario**
+
+### Variables de Hechos
 
 **Variables de Flujo**
 
@@ -59,8 +80,13 @@ En monto.
         * programado/proyectado: no
         * meta: sí, manuable en Power BI (manublPBI)
 
+## Tablas del DataMart Estratégico
 
-### Tablas del DataMart Estratégico
+### Tablas de Dimensiones
+
+- dim_asesor
+
+### Tablas de Hechos
 
 - fct_flow_day_calcbl
 - fct_flow_day_manual

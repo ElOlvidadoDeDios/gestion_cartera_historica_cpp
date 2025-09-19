@@ -91,3 +91,5 @@ En monto.
 - fct_flow_day_calcbl
 - fct_flow_day_manubl
 - fct_flow_month_manubl
+
+- fct_stock_month_calcbl

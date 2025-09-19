@@ -12,38 +12,17 @@ WITH
 ---------------
 
 CTE AS (
---CTE-INICIO. Cartera y Moras
+--CTE-INICIO
 
 ------
 SELECT
 ------
 
---Variables de agrupacion
-  T1.PERIODO,
+--Unidad minima operativa
   T1.PAGARE,
-  --Nombre completo del asesor
-  DBO.OBT_NOMBRE_USER(
-      (
-        SELECT
-          ID_USER
-        FROM
-          SEGURIDAD.DBO.ANAREC
-        WHERE
-          FLAG_ANAREC = 'A'        AND
-          ID_AGE      = T1.AGE_ANA AND
-          ID_ANAREC   = T1.ID_ANA
-      ),
-      'A'
-  ) AS Asesor,
-  --Agencia
-  CASE
-    WHEN T1.AGE_ANA = '98' THEN
-      CASE
-        WHEN RIGHT(RTRIM(NEXO_ANA.ID_USER), 1) = '6' THEN '06'
-        WHEN RIGHT(RTRIM(NEXO_ANA.ID_USER), 1) = '7' THEN '07'
-      END
-    ELSE NEXO_ANA.ID_AGE
-  END AS IdSAgencia,
+
+--Variables de agrupacion
+  --Identificador subrogado del asesor
   NEXO_ANA.ID_USER AS IdAsesor,
 
 --Variables a ser agrupadas
@@ -66,17 +45,17 @@ SELECT
 ------
 FROM
 ------
-  PREEC                              T1
-  INNER JOIN SEGURIDAD.DBO.ANAREC    NEXO_ANA ON NEXO_ANA.ID_ANAREC = T1.ID_ANA         AND NEXO_ANA.FLAG_ANAREC = 'A'
-  INNER JOIN SEGURIDAD.dbo.USUARIOS  NEXO_USU ON NEXO_USU.ID_USER   = NEXO_ANA.ID_USER
-  INNER JOIN SEGURIDAD.dbo.GRUPOUSER NEXO_GRU ON NEXO_GRU.ID_GRUPO  = NEXO_USU.ID_GRUPO
+    PREEC                                   T1
+    INNER JOIN SEGURIDAD.DBO.ANAREC         NEXO_ANA ON NEXO_ANA.ID_ANAREC = T1.ID_ANA         AND NEXO_ANA.FLAG_ANAREC = 'A'
+        INNER JOIN SEGURIDAD.dbo.USUARIOS   NEXO_USU ON NEXO_USU.ID_USER   = NEXO_ANA.ID_USER
+    INNER JOIN SEGURIDAD.dbo.GRUPOUSER      NEXO_GRU ON NEXO_GRU.ID_GRUPO  = NEXO_USU.ID_GRUPO
 ------
 WHERE
 ------
   T1.PERIODO        >= FORMAT(GETDATE(), 'yyyyMM') AND
   NEXO_GRU.ID_GRUPO =  '04'
 
---CTE-FIN. Cartera y Moras
+--CTE-FIN
 )
 
 --==============
@@ -85,20 +64,14 @@ WHERE
 
 SELECT
   CAST(GETDATE() AS DATE)  AS Fecha,
-  IdSAgencia,
   IdAsesor,
-  Asesor,
   SUM(SaldoCapital)        AS Cartera,
   SUM(Mora9_SaldoCapital)  AS Mora9,
   SUM(Mora31_SaldoCapital) AS Mora31
 FROM
   CTE
 GROUP BY
-  IdSAgencia,
-  IdAsesor,
-  Asesor
+  IdAsesor
 ORDER BY
-  Fecha      ASC,
-  IdSAgencia ASC,
-  IdAsesor   ASC
+  IdAsesor ASC
 ;

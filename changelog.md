@@ -6,6 +6,9 @@
 
 ### Dimensión Asesor
 
+* Configuraciones: `conf\config.yaml`
+    * [ ] `dim_asesor`
+
 * SQL: `sql/dim_asesor.sql`
     * [x] `IdSAsesor`
     * [x] `AsesorNombresApellidos`
@@ -17,6 +20,12 @@
 ---
 
 ### Variables de las Tablas de Hechos
+
+* Configuraciones: `conf\config.yaml`
+    * [ ] `fct_flow_day_calcbl`
+    * [ ] `fct_flow_day_manubl`
+    * [ ] `fct_flow_month_manubl`
+    * [ ] `fct_stock_month_calcbl`
 
 ---
 

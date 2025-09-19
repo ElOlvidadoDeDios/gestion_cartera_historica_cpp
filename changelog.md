@@ -1,10 +1,31 @@
 # DataMart Estratégico al Primer Nivel de Agrupación (Asesores)
 
+## Tablas de Dimensiones
+
 ---
 
-## Colocación
+### Dimensión Asesor
 
-### Respecto a la cantidad
+* [ ] `IdSAsesor`
+    - SQL
+* [ ] `AsesorNombresApellidos`
+    - SQL
+* [ ] `Asesor`
+    - Python
+* [ ] `Cargo`
+    - SQL
+* [ ] `IdSAgencia`
+    - SQL
+
+---
+
+### Variables de las Tablas de Hechos
+
+---
+
+### Colocación
+
+**Respecto a la cantidad**
 
 Vía programación:
 
@@ -22,7 +43,7 @@ Manualmente:
 * [ ] Colocación -> cantidad -> day -> meta (manual en SQL Server)
 * [ ] Colocación -> cantidad -> month -> meta (manual en SQL Server)
 
-### Respecto al monto
+**Respecto al monto**
 
 Vía programación:
 
@@ -46,7 +67,7 @@ Manualmente:
 
 ---
 
-## Repago
+### Repago
 
 Vía programación:
 
@@ -63,7 +84,7 @@ Vía programación:
 
 ---
 
-## Mora
+### Mora
 
 Vía programación:
 

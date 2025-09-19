@@ -89,5 +89,5 @@ En monto.
 ### Tablas de Hechos
 
 - fct_flow_day_calcbl
-- fct_flow_day_manual
-- fct_flow_month_manual
+- fct_flow_day_manubl
+- fct_flow_month_manubl

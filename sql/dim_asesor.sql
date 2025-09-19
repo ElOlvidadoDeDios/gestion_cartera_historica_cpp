@@ -29,7 +29,7 @@ SELECT
 	END AS IdSAgencia,
 
     -- ID asesor
-	NEXO_ANA.ID_USER AS IdAsesor,
+	NEXO_ANA.ID_USER AS IdSAsesor,
 
 	--Nombre completo del asesor
 	DBO.OBT_NOMBRE_USER(
@@ -44,7 +44,7 @@ SELECT
 			ID_ANAREC   = T1.ID_ANA
 		),
 		'A'
-	) AS Asesor,
+	) AS AsesorNombresApellidos,
 
     -- Cargo
     NEXO_TCU.DESCRIP AS Cargo
@@ -72,13 +72,13 @@ WHERE
 --==============
 
 SELECT DISTINCT
-	IdSAgencia,
-	IdAsesor,
-	Asesor,
-    Cargo
+	IdSAsesor,
+	AsesorNombresApellidos,
+    Cargo,
+	IdSAgencia
 FROM
 	CTE
 ORDER BY
 	IdSAgencia ASC,
-	Asesor     ASC
+	IdSAsesor  ASC
 ;

@@ -6,17 +6,14 @@
 
 ### Dimensión Asesor
 
-* [ ] `IdSAsesor`
-    - SQL
-* [ ] `AsesorNombresApellidos`
-    - SQL
-* [ ] `Asesor`
-    - Python
-* [ ] `Cargo`
-    - SQL
-* [ ] `IdSAgencia`
-    - SQL
+* SQL: `sql/dim_asesor.sql`
+    * [x] `IdSAsesor`
+    * [x] `AsesorNombresApellidos`
+    * [x] `Cargo`
+    * [x] `IdSAgencia`
 
+* Python
+    * [ ] `Asesor`
 ---
 
 ### Variables de las Tablas de Hechos

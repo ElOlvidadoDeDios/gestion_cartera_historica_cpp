@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 load_dotenv('.env')
 import os
 from sqlalchemy import create_engine
+import yaml
 
 class DatabaseConnection:
     def _get_env(self, stream: str) -> tuple[str]:
@@ -36,7 +37,15 @@ class DatabaseConnection:
         return engine
 
 
+def load_config(path_config: str = 'conf/config.yaml'):
+    with open(path_config, 'r') as f:
+        return yaml.safe_load(f)
+
+
 if __name__ == '__main__':
+
+    config = load_config()
+    print(config["table"]["dim"]["asesor"])
 
     database_connection = DatabaseConnection()
     engine_upstream = database_connection.engine('downstream')

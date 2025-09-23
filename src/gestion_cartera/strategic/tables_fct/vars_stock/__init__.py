@@ -6,6 +6,7 @@ import pandas as pd
 from datetime import date
 from gestion_cartera.core.utils import load_config
 config = load_config()
+from gestion_cartera.core.config import ConfigManager
 
 #############################
 ### EXTRACT
@@ -55,7 +56,7 @@ df = pd.read_sql(query, engine_upstream)
 
 # Insertar registros actuales de hoy
 df.to_sql(
-    'fct_stock_month_caclbl', con=engine_downstream, if_exists="replace", index=False
+    ConfigManager.tables.fct.stock.month.calcbl, con=engine_downstream, if_exists="replace", index=False
 )
 
 ###=============================

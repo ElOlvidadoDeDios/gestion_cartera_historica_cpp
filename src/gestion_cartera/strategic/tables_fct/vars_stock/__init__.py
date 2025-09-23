@@ -1,9 +1,7 @@
-from gestion_cartera.core.utils import DatabaseConnection
-from gestion_cartera.core.constants import *
-from pathlib import Path
-from sqlalchemy import text
-import pandas as pd
 from gestion_cartera.core.config import ConfigManager
+from gestion_cartera.core import constants
+from gestion_cartera.core.utils import DatabaseConnection
+import pandas as pd
 
 #############################
 ### EXTRACT
@@ -25,17 +23,7 @@ engine_downstream = database_connection.engine('downstream')
 ### T-SQL Queries
 ###==========================
 
-#project_path = Path(__file__).resolve().parents[6]
-
-###-------------------------------------
-### Tabla "stock_real_cartera_moras"
-###-------------------------------------
-
-path_query = Path(PATH_PROJECT, "sql/cartera_moras.sql")
-
-query = path_query.read_text(encoding='utf-8')
-
-df = pd.read_sql(query, engine_upstream)
+df = pd.read_sql(constants.SQL_CARTERA_MORAS, engine_upstream)
 
 #############################
 ### TRANSFORM

@@ -1,13 +1,20 @@
-# DataMart Estratégico al Primer Nivel de Agrupación (Asesores)
+# DataMart Estratégico
 
-## Tablas de Dimensiones
+* [x] Crear base de datos `dm_gestion_cartera_strategic`.
+* [x] Establecer el nombre de este DataMart como variable de entorno en `.env/`.
 
----
+Nota. Dado que este DataMart es estratégico, las agrupaciones se harán a su primer nivel, en concreto al nivel de asesores de crédito. Los siguientes niveles de agrupación (agencia y cooperativa) se obtendrán agrupando a partir de esta primera agrupación.
+
+## Tablas y Variables de Dimensiones
 
 ### Dimensión Asesor
 
+**Tabla**
+
 * Configuraciones: `conf\config.yaml`
     * [ ] `dim_asesor`
+
+**Variables**
 
 * SQL: `sql/dim_asesor.sql`
     * [x] `IdSAsesor`
@@ -17,9 +24,10 @@
 
 * Python
     * [x] `Asesor`
----
 
-### Variables de las Tablas de Hechos
+## Tablas y Variables de Hechos
+
+### Tablas
 
 * Configuraciones: `conf\config.yaml`
     * [ ] `fct_flow_day_calcbl`
@@ -27,11 +35,13 @@
     * [ ] `fct_flow_month_manubl`
     * [ ] `fct_stock_month_calcbl`
 
+### Variables
+
 ---
 
-### Colocación
+**Colocación**
 
-**Respecto a la cantidad**
+*Respecto a la cantidad*
 
 Vía programación:
 
@@ -49,7 +59,7 @@ Manualmente:
 * [ ] Colocación -> cantidad -> day -> meta (manual en SQL Server)
 * [ ] Colocación -> cantidad -> month -> meta (manual en SQL Server)
 
-**Respecto al monto**
+*Respecto al monto*
 
 Vía programación:
 
@@ -73,7 +83,7 @@ Manualmente:
 
 ---
 
-### Repago
+**Repago**
 
 Vía programación:
 
@@ -90,7 +100,7 @@ Vía programación:
 
 ---
 
-### Mora
+**Mora**
 
 Vía programación:
 

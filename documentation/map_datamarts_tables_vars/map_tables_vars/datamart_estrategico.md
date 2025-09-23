@@ -88,15 +88,15 @@ En monto.
 
 * Variable de hecho
 * Variable de stock
-* Temporalidades
-    * day(on_date):
-        * real: sí, calculable en Python (calcblPYTHON)
+* Naturaleza temporal:
+    * month(at_date): intrínseca
+        * real: sí, calculable en SQL (calcbl_sql)
+        * programado/proyectado: no
+        * meta: sí, manuable en Power BI (manubl_pbi)
+    * day(on_date): extrínseca
+        * real: sí, calculable en Python (calcbl_python)
         * programado/proyectado: no
         * meta: no
-    * month(at_date):
-        * real: sí, calculable en SQL (calcblSQL)
-        * programado/proyectado: no
-        * meta: sí, manuable en Power BI (manublPBI)
 
 ## Tablas del DataMart Estratégico
 

@@ -3,6 +3,12 @@ load_dotenv('.env')
 import os
 from sqlalchemy import create_engine
 import yaml
+from ensure import ensure_annotations
+import yaml
+from box.exceptions import BoxValueError
+from box import ConfigBox
+from pathlib import Path
+from gestion_cartera.core.constants import *
 
 class DatabaseConnection:
     def _get_env(self, stream: str) -> tuple[str]:
@@ -42,11 +48,20 @@ def load_config(path_config: str = 'conf/config.yaml'):
         return yaml.safe_load(f)
 
 
+@ensure_annotations
+def read_yaml(path_to_yaml: Path) -> ConfigBox:
+    try:
+        with open(path_to_yaml, 'r') as file_yaml:
+            content = yaml.safe_load(file_yaml)
+            if not content:
+                raise ValueError('YAML file is empty.')
+            return ConfigBox(content)
+    except BoxValueError:
+        raise ValueError('YAML file is empty.')
+    except Exception as e:
+        raise e
+
+
 if __name__ == '__main__':
-
-    config = load_config()
-    print(config["table"]["dim"]["asesor"])
-
-    database_connection = DatabaseConnection()
-    engine_upstream = database_connection.engine('downstream')
-    print(engine_upstream)
+    config = read_yaml(PATH_CONFIG)
+    print(config.table)

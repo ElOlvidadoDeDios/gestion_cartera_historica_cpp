@@ -11,13 +11,11 @@ import pandas as pd
 ### Conexion a bases de datos
 ###==========================
 
-database_connection = DatabaseConnection()
-
 ### Database upstream
-engine_upstream = database_connection.engine('upstream')
+engine_upstream = DatabaseConnection.engine('upstream')
 
 ### Database downstream
-engine_downstream = database_connection.engine('downstream')
+engine_downstream = DatabaseConnection.engine('downstream')
 
 ###==========================
 ### T-SQL Queries

@@ -43,11 +43,6 @@ class DatabaseConnection:
         return engine
 
 
-def load_config(path_config: str = 'conf/config.yaml'):
-    with open(path_config, 'r') as f:
-        return yaml.safe_load(f)
-
-
 @ensure_annotations
 def read_yaml(path_to_yaml: Path) -> ConfigBox:
     try:

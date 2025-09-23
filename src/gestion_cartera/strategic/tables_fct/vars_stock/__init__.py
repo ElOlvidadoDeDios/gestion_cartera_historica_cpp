@@ -3,9 +3,6 @@ from gestion_cartera.core.constants import *
 from pathlib import Path
 from sqlalchemy import text
 import pandas as pd
-from datetime import date
-from gestion_cartera.core.utils import load_config
-config = load_config()
 from gestion_cartera.core.config import ConfigManager
 
 #############################

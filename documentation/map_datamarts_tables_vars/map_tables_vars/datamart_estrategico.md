@@ -64,12 +64,30 @@ En monto.
         - programado: sí, calculable en Power BI (calcblPBI)
         - meta: no
 
+**Variables de Stock**
+
+*Cartera*
+
+En monto.
+
+* Variable de hecho
+* Variable de stock
+* Naturaleza temporal:
+    * month (at_date): intrínseca
+        - real: sí -> calculable en SQL (calcbl_sql)
+        - proyectado/programado: no
+        - meta: no
+    * day (on_date): extrínseca
+        - real: sí -> calculable en Python (calcbl_python)
+        - proyectado/programado: no
+        - meta: no
+
 *Mora*
 
 En monto.
 
 * Variable de hecho
-* Variable stock
+* Variable de stock
 * Temporalidades
     * day(on_date):
         * real: sí, calculable en Python (calcblPYTHON)

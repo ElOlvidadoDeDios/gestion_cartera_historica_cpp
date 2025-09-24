@@ -1,5 +1,6 @@
 from gestion_cartera.core.config import ConfigManager
 from gestion_cartera.core import constants
+from gestion_cartera.components.extract import Extractor
 from gestion_cartera.core.utils import DatabaseConnection
 import pandas as pd
 
@@ -7,21 +8,7 @@ import pandas as pd
 ### EXTRACT
 #############################
 
-###==========================
-### Conexion a bases de datos
-###==========================
-
-### Database upstream
-engine_upstream = DatabaseConnection.engine('upstream')
-
-### Database downstream
-engine_downstream = DatabaseConnection.engine('downstream')
-
-###==========================
-### T-SQL Queries
-###==========================
-
-df = pd.read_sql(constants.SQL_CARTERA_MORAS, engine_upstream)
+df = Extractor.run(constants.SQL_CARTERA_MORAS)
 
 #############################
 ### TRANSFORM
@@ -32,6 +19,9 @@ df = pd.read_sql(constants.SQL_CARTERA_MORAS, engine_upstream)
 #############################
 ### LOAD
 #############################
+
+### Database downstream
+engine_downstream = DatabaseConnection.engine('downstream')
 
 ###=============================
 ### Variación incremental
@@ -46,5 +36,4 @@ df.to_sql(
 ### Desconexion a bases de datos
 ###=============================
 
-engine_upstream.dispose()
 engine_downstream.dispose()

@@ -38,7 +38,7 @@ class DatabaseConnection:
         return create_engine(conn)
     
     @classmethod
-    def engine(cls, stream:str):
+    def get_engine(cls, stream:str):
         user, password, server, database = cls._get_env(stream)
         conn = cls._get_conn(stream, user, password, server, database)
         engine = cls._get_engine(conn)

@@ -7,12 +7,15 @@ from gestion_cartera.components.load import LoaderFactory
 def pipeline_dim_asesor():
     df_loaded = Extractor.run(constants.SQL_DIM_ASESOR)
     df_transformed = TransformerFactory().get_transformer('dim_asesor').run(df=df_loaded)
-    LoaderFactory.get_loader('strategic').run(df=df_transformed, table=ConfigManager.tables.dim.asesor)
+    LoaderFactory.get_loader('strategic').run(df=df_transformed, table=ConfigManager.table.dim.asesor)
 
 def pipeline_vars_stock():
     df = Extractor.run(constants.SQL_CARTERA_MORAS)
-    LoaderFactory.get_loader('strategic').run(df=df, table=ConfigManager.tables.fct.stock.month.calcbl)
+    LoaderFactory.get_loader('strategic').run(df=df, table=ConfigManager.table.fct.stock)
 
+def pipeline_vars_flow():
+    df = Extractor.run(constants.SQL_COLOCACION)
+    LoaderFactory.get_loader('strategic').run(df=df, table=ConfigManager.table.fct.flow)
 
 if __name__ == '__main__':
-    pipeline_dim_asesor()
+    pipeline_vars_flow()

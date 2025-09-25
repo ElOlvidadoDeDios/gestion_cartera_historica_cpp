@@ -1,0 +1,5 @@
+dim:
+  asesor: dim_asesor
+fct:
+  flow: fct_flow_day_calcbl
+  stock: fct_stock_month_calcbl

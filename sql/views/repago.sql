@@ -1,18 +1,21 @@
---- =============
+GO
+CREATE OR ALTER VIEW gc_repago WITH ENCRYPTION
+AS
+
+--- ############
 --- NOTAS
---- =============
+--- ############
 
---- =============
+--- ############
 --- PREAMBULO
---- =============
+--- ############
 
---- -------------
+--- ============
 --- CTEs
 WITH
---- -------------
+--- ============
 
 CTE AS (
---CTE-INICIO. Repago en la fecha vigente
 
 ------
 SELECT
@@ -26,8 +29,8 @@ SELECT
 ------
 FROM
 ------
-	PREMOV T1
-		INNER JOIN PREEC            NEXO_PRE ON NEXO_PRE.CUENTA = T1.CUENTA       AND NEXO_PRE.PAGARE = T1.PAGARE AND NEXO_PRE.OTORGA = T1.OTORGA AND NEXO_PRE.PERIODO = '202508'
+	PREMOV                          T1
+		INNER JOIN PREEC            NEXO_PRE ON NEXO_PRE.CUENTA = T1.CUENTA       AND NEXO_PRE.PAGARE = T1.PAGARE AND NEXO_PRE.OTORGA = T1.OTORGA AND NEXO_PRE.PERIODO = FORMAT(GETDATE(), 'yyyyMM')
 	INNER JOIN SEGURIDAD.dbo.ANAREC T2       ON T2.ID_ANAREC    = NEXO_PRE.ID_ANA AND T2.FLAG_ANAREC  = 'A'
 ------
 WHERE
@@ -46,20 +49,22 @@ WHERE
 			LEFT(A.TIPO_MOV, 2) = '01'
 	) AND
 	T1.TIPO_DOC IN ('01','03') 
---CTE-FIN. Repagos a la fecha
+
 )
---- ==============
+
+--- ############
 --- MAIN
---- ==============
+--- ############
+
 SELECT
 	CAST(T.FECHA_MOV AS DATE) AS Fecha,
-	T.ID_USER                 AS IdAsesor,
+	T.ID_USER                 AS IdSAsesor,
 	SUM(T.CAPITAL)            AS RepagoReal
 FROM CTE T
 GROUP BY
 	T.FECHA_MOV,
 	T.ID_USER
-ORDER BY
-	Fecha    ASC,
-	IdAsesor ASC
-;
+--ORDER BY
+--	Fecha    ASC,
+--	IdSAsesor ASC
+GO

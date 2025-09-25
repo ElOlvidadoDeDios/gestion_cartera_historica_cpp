@@ -1,24 +1,26 @@
---- =============
+GO
+CREATE OR ALTER VIEW gc_colocacion WITH ENCRYPTION
+AS
+
+--- ############
 --- NOTAS
---- =============
+--- ############
 
 /*
 - Sobre creditos extornados (improcedentes)
 - Sobre creditos castigados
 */
 
---- =============
+--- ############
 --- PREAMBULO
---- =============
+--- ############
 
---- -------------
+--- ============
 --- CTEs
 WITH
---- -------------
+--- ============
 
 CTE AS (
---CTE-INICIO. Colocacion en la fecha vigente
-
 ------
 SELECT
 ------
@@ -43,25 +45,24 @@ WHERE
 		(
 		SELECT MIN(A.PERIODO) FROM PREEC A WHERE A.CUENTA = NEXO_PRE.CUENTA AND A.OTORGA = NEXO_PRE.OTORGA AND A.PAGARE = NEXO_PRE.PAGARE
 		)
---CTE-FIN. Colocaciones
 
 )
---- ==============
+
+--- ############
 --- MAIN
---- ==============
+--- ############
 
 SELECT
-	CAST(T.Fecha AS DATE)                           AS Fecha,
-	T.ID_USER                                       AS IdSAsesor,
-    CAST(T.Fecha AS VARCHAR(10)) + '-' + T.ID_USER  AS IdUpdate,
-	COUNT(T.PAGARE)                                 AS [ColocacionNumReal],
-	SUM(T.MONTO_PRESTAMO)                           AS [ColocacionMontoReal]
+	CAST(T.Fecha AS DATE) AS Fecha,
+	T.ID_USER             AS IdSAsesor,
+	COUNT(T.PAGARE)       AS [ColocacionNumReal],
+	SUM(T.MONTO_PRESTAMO) AS [ColocacionMontoReal]
 FROM
 	CTE T
 GROUP BY
 	T.Fecha,
 	T.ID_USER
-ORDER BY
-	T.Fecha,
-	T.ID_USER
-;
+--ORDER BY
+--	T.Fecha,
+--	T.ID_USER
+GO

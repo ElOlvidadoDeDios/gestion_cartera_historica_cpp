@@ -3,7 +3,7 @@ from gestion_cartera.core.utils import read_yaml
 from box import ConfigBox
 
 class ConfigManager:
-    tables: ConfigBox = read_yaml(constants.PATH_CONFIG_TABLES)
+    table: ConfigBox = read_yaml(constants.PATH_CONFIG_TABLE)
 
 
 if __name__ == '__main__':

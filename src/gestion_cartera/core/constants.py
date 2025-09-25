@@ -5,12 +5,12 @@ PATH_PROJECT = Path("D:/development_stage/bunisess_intelligence_projects/dile-ge
 PATH_SQL = Path(PATH_PROJECT, "sql/")
 
 # Config paths
-PATH_CONFIG_TABLES = Path("conf/tables.yaml")
+PATH_CONFIG_TABLE = Path("conf/table.yaml")
 
 # SQL queries paths
 SQL_DIM_ASESOR = Path(PATH_SQL, 'dim_asesor.sql').read_text(encoding='utf-8')
 SQL_CARTERA_MORAS = Path(PATH_SQL, 'cartera_moras.sql').read_text(encoding='utf-8')
-
+SQL_COLOCACION = Path(PATH_SQL, 'colocacion.sql').read_text(encoding='utf-8')
 
 if __name__ == '__main__':
-    print(SQL_DIM_ASESOR)
+    print(SQL_COLOCACION)

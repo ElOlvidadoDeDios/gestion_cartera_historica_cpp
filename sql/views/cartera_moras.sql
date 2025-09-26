@@ -1,3 +1,7 @@
+GO
+CREATE OR ALTER VIEW gc_cartera_moras WITH ENCRYPTION
+AS
+
 --=============
 --NOTAS
 --=============
@@ -23,7 +27,7 @@ SELECT
 
 --Variables de agrupacion
   --Identificador subrogado del asesor
-  NEXO_ANA.ID_USER AS IdAsesor,
+  NEXO_ANA.ID_USER AS IdSAsesor,
 
 --Variables a ser agrupadas
 
@@ -64,14 +68,14 @@ WHERE
 
 SELECT
   CAST(GETDATE() AS DATE)  AS Fecha,
-  IdAsesor,
+  IdSAsesor,
   SUM(SaldoCapital)        AS Cartera,
   SUM(Mora9_SaldoCapital)  AS Mora9,
   SUM(Mora31_SaldoCapital) AS Mora31
 FROM
   CTE
 GROUP BY
-  IdAsesor
-ORDER BY
-  IdAsesor ASC
-;
+  IdSAsesor
+--ORDER BY
+--  IdSAsesor ASC
+GO

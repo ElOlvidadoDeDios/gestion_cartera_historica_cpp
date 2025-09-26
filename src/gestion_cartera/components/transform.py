@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
 import pandas as pd
 from enum import Enum
-from typing import Literal
+from typing import Literal, Union, Sequence
 
 # Producto
 class Transformer(ABC):
     @abstractmethod
-    def run(self, df: pd.DataFrame) -> pd.DataFrame:
+    def run(dfs: Sequence[pd.DataFrame]) -> pd.DataFrame:
         pass
 
 # Productos concretos
@@ -36,7 +36,8 @@ class TransformerDimAsesor(Transformer):
 
 
     @staticmethod
-    def run(df: pd.DataFrame) -> pd.DataFrame:
+    def run(dfs: Sequence[pd.DataFrame]) -> pd.DataFrame:
+        df = dfs[0]
         df = TransformerDimAsesor._quitar_asesores_atipicos(df)
         df = TransformerDimAsesor._run_alias_asesor(df)
         return df

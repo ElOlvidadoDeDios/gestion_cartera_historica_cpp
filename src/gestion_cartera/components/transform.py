@@ -2,11 +2,13 @@ from abc import ABC, abstractmethod
 import pandas as pd
 from enum import Enum
 from typing import Literal, Union, Sequence
+from gestion_cartera.components.extract import Extractor
+
 
 # Producto
 class Transformer(ABC):
     @abstractmethod
-    def run(dfs: Sequence[pd.DataFrame]) -> pd.DataFrame:
+    def run(df: pd.DataFrame) -> pd.DataFrame:
         pass
 
 # Productos concretos
@@ -22,10 +24,14 @@ class TransformerDimAsesor(Transformer):
 
     @staticmethod
     def _alias_asesor(var_name):
-        apellidos, nombres = var_name.split(', ')
-        iniciales_apellidos = ''.join([a[0].upper() for a in apellidos.split()])
-        primer_nombre = nombres.split()[0].capitalize()
-        return f"{primer_nombre} {iniciales_apellidos}"
+        try:
+            apellidos, nombres = var_name.split(', ')
+        except ValueError:
+            apellidos, nombres = var_name, ""
+
+        iniciales_apellidos = ''.join([a[0].upper() for a in apellidos.split()]) if apellidos else ""
+        primer_nombre = nombres.split()[0].capitalize() if nombres.strip() else "ANONIMO"
+        return f"{primer_nombre} {iniciales_apellidos}".strip()
 
 
     @staticmethod
@@ -36,8 +42,7 @@ class TransformerDimAsesor(Transformer):
 
 
     @staticmethod
-    def run(dfs: Sequence[pd.DataFrame]) -> pd.DataFrame:
-        df = dfs[0]
+    def run(df: pd.DataFrame) -> pd.DataFrame:
         df = TransformerDimAsesor._quitar_asesores_atipicos(df)
         df = TransformerDimAsesor._run_alias_asesor(df)
         return df
@@ -61,4 +66,5 @@ class TransformerFactory:
 
 
 if __name__ == '__main__':
-    pass
+    df = Extractor.run(constants.SQL_DIM_ASESOR)
+    df_loaded['Asesor'] = df_loaded['AsesorNombresApellidos'].apply(_alias_asesor)

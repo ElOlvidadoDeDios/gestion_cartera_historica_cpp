@@ -13,7 +13,7 @@ def pipeline_dim_asesor() -> None:
 
 
 def pipeline_vars_stock() -> None:
-    df = Extractor.run(constants.SQL_CARTERA_MORAS)
+    df = Extractor.run(constants.SQL_FCT_STOCK)
     LoaderFactory.get_loader('strategic').run(df=df, table=ConfigManager.table.fct.stock)
 
 
@@ -23,4 +23,4 @@ def pipeline_vars_flow() -> None:
 
 
 if __name__ == '__main__':
-    pipeline_vars_flow()
+    pipeline_vars_stock()

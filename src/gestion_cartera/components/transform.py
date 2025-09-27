@@ -16,13 +16,6 @@ class Transformer(ABC):
 class TransformerDimAsesor(Transformer):
 
     @staticmethod
-    def _quitar_asesores_atipicos(df: pd.DataFrame) -> pd.DataFrame:
-        df = df.copy()
-        df_new = df[df['IdSAgencia'].notna()]
-        return df_new
-
-
-    @staticmethod
     def _alias_asesor(var_name):
         try:
             apellidos, nombres = var_name.split(', ')
@@ -43,7 +36,6 @@ class TransformerDimAsesor(Transformer):
 
     @staticmethod
     def run(df: pd.DataFrame) -> pd.DataFrame:
-        df = TransformerDimAsesor._quitar_asesores_atipicos(df)
         df = TransformerDimAsesor._run_alias_asesor(df)
         return df
 

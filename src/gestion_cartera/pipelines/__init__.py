@@ -12,15 +12,15 @@ def pipeline_dim_asesor() -> None:
     LoaderFactory.get_loader('strategic').run(df=df_transformed, table=ConfigManager.table.dim.asesor)
 
 
-def pipeline_vars_stock() -> None:
+def pipeline_fct_stock() -> None:
     df = Extractor.run(constants.SQL_FCT_STOCK)
     LoaderFactory.get_loader('strategic').run(df=df, table=ConfigManager.table.fct.stock)
 
 
-def pipeline_vars_flow() -> None:
+def pipeline_fct_flow() -> None:
     df = Extractor.run(constants.SQL_FCT_FLOW)
     LoaderFactory.get_loader('strategic').run(df=df, table=ConfigManager.table.fct.flow)
 
 
 if __name__ == '__main__':
-    pipeline_vars_stock()
+    pipeline_fct_stock()

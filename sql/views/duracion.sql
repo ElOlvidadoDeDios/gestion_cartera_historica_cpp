@@ -32,7 +32,7 @@ GROUP BY
 )
 
 SELECT
-    CAST(GETDATE() AS DATE) AS Fecha,
+    FORMAT(GETDATE(), 'yyyyMM') AS Periodo,
     T.ID_USER AS IdSAsesor,
     (T.OPE_DIV / 5) AS Duracion
 FROM CTE T

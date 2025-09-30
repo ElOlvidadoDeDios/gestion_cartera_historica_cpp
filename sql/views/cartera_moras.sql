@@ -67,7 +67,7 @@ WHERE
 --==============
 
 SELECT
-  CAST(GETDATE() AS DATE)  AS Fecha,
+  FORMAT(GETDATE(), 'yyyyMM')  AS Periodo,
   IdSAsesor,
   SUM(SaldoCapital)        AS Cartera,
   SUM(Mora9_SaldoCapital)  AS Mora9,

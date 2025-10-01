@@ -1,6 +1,5 @@
 GO
-CREATE OR ALTER VIEW gc_repago WITH ENCRYPTION
-AS
+CREATE OR ALTER VIEW gc_repago WITH ENCRYPTION AS
 
 --- ############
 --- NOTAS

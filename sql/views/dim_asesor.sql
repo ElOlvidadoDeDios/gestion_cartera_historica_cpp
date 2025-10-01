@@ -1,6 +1,5 @@
 GO
-CREATE OR ALTER VIEW gc_dim_asesor WITH ENCRYPTION
-AS
+CREATE OR ALTER VIEW gc_dim_asesor WITH ENCRYPTION AS
 
 --- ############
 --- NOTAS

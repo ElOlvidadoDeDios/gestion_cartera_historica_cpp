@@ -1,6 +1,5 @@
 GO
-CREATE OR ALTER VIEW gc_cartera_moras WITH ENCRYPTION
-AS
+CREATE OR ALTER VIEW gc_cartera_moras WITH ENCRYPTION AS
 
 --=============
 --NOTAS

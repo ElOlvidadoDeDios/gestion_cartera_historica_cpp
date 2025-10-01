@@ -1,6 +1,5 @@
 GO
-CREATE OR ALTER VIEW gc_colocacion WITH ENCRYPTION
-AS
+CREATE OR ALTER VIEW gc_colocacion WITH ENCRYPTION AS
 
 --- ############
 --- NOTAS

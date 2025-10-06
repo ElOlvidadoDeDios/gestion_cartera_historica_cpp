@@ -2,7 +2,7 @@ from gestion_cartera.core.config import ConfigManager
 from gestion_cartera.core import constants
 from gestion_cartera.components.extract import Extractor
 from gestion_cartera.components.transform import TransformerFactory
-from gestion_cartera.components.load import LoaderFactory
+from gestion_cartera.components.load import LoaderFactory, LoaderStrategicInitial, LoaderStrategicVariational
 import pandas as pd
 
 
@@ -14,7 +14,9 @@ def pipeline_dim_asesor() -> None:
 
 def pipeline_fct_stock() -> None:
     df = Extractor.run(constants.SQL_FCT_STOCK)
-    LoaderFactory.get_loader('strategic').run(df=df, table=ConfigManager.table.fct.stock)
+    loader_factory = LoaderFactory.get_loader('strategic')
+    loader_factory.strategy = LoaderStrategicVariational
+    loader_factory.run(df=df, table=ConfigManager.table.fct.stock, temporality='at_date')
 
 
 def pipeline_fct_flow() -> None:

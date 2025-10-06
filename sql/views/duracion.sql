@@ -1,39 +1,60 @@
 GO
 CREATE OR ALTER VIEW gc_duracion WITH ENCRYPTION AS
 
-WITH CTE AS (
+--- ############
+--- NOTAS
+--- ############
 
+--- ############
+--- PREAMBULO
+--- ############
+
+--- ============
+--- CTEs
+WITH
+--- ============
+
+CTE AS (
+
+------
 SELECT
+------
+    --Periodo
+    E.PERIODO,
     --ID del asesor
     NEXO_ANA.ID_USER,
-    --Promedio de plazo
-    AVG(P.PLAZO) AS PRO_PLAZO,
     --Varios
-    SUM(PD.CAPITAL) AS VARIOS,
+    SUM(NEXO_DED.CAPITAL) AS VARIOS,
     --Numero de operaciones
-    (SELECT COUNT(PAGARE) FROM PREEC WHERE OTORGA>='01/09/2025' AND ID_ANA=E.ID_ANA) AS NUM_OPE,
-    --"Operacion de division"
-    (
-        SUM(PD.CAPITAL) /
-        (SELECT COUNT(PAGARE) FROM PREEC WHERE OTORGA>='01/09/2025' AND ID_ANA=E.ID_ANA)
-    ) AS OPE_DIV
+    (SELECT COUNT(PAGARE) FROM PREEC WHERE FORMAT(OTORGA, 'yyyyMM') = FORMAT(GETDATE(), 'yyyyMM') AND ID_ANA=E.ID_ANA) AS NUMERO_OPERACIONES
+------
 FROM
-    PREEC                     E
-    INNER JOIN SEGURIDAD.DBO.ANAREC NEXO_ANA ON NEXO_ANA.ID_ANAREC = E.ID_ANA AND NEXO_ANA.FLAG_ANAREC = 'A'
-    INNER JOIN PRESTAMO       P  ON P.PAGARE=E.PAGARE AND P.OTORGA >= '01/09/2025'
-    INNER JOIN PRE_DEDUCESOLI PD ON P.PAGARE = PD.NRO_SOL AND GLOSA =  'Cursos-Capacitación'
+------
+    PREEC                           E
+    INNER JOIN SEGURIDAD.DBO.ANAREC NEXO_ANA ON NEXO_ANA.ID_ANAREC = E.ID_ANA         AND NEXO_ANA.FLAG_ANAREC              =  'A'
+    INNER JOIN PRESTAMO             NEXO_PRE ON NEXO_PRE.PAGARE    = E.PAGARE         AND FORMAT(NEXO_PRE.OTORGA, 'yyyyMM') = FORMAT(GETDATE(), 'yyyyMM')
+    INNER JOIN PRE_DEDUCESOLI       NEXO_DED ON NEXO_PRE.PAGARE    = NEXO_DED.NRO_SOL AND GLOSA                             =  'Cursos-Capacitación'
+------
 WHERE
-    PERIODO='202509'
+------
+    PERIODO = FORMAT(GETDATE(), 'yyyyMM')
+--------
 GROUP BY
+--------
+    E.PERIODO,
     E.ID_ANA,
     NEXO_ANA.ID_USER
 
 )
 
-SELECT
-    FORMAT(GETDATE(), 'yyyyMM') AS Periodo,
-    T.ID_USER AS IdSAsesor,
-    (T.OPE_DIV / 5) AS Duracion
-FROM CTE T
+--- ############
+--- MAIN
+--- ############
 
+SELECT
+    T.PERIODO                             AS Periodo,
+    T.ID_USER                             AS IdSAsesor,
+    (T.VARIOS / T.NUMERO_OPERACIONES) / 5 AS Duracion
+FROM
+    CTE T
 GO

@@ -20,7 +20,8 @@ CTE AS (
 ------
 SELECT
 ------
-
+--Periodo
+  T1.PERIODO,
 --Unidad minima operativa
   T1.PAGARE,
 
@@ -66,7 +67,7 @@ WHERE
 --==============
 
 SELECT
-  FORMAT(GETDATE(), 'yyyyMM')  AS Periodo,
+  PERIODO                  AS Periodo,
   IdSAsesor,
   SUM(SaldoCapital)        AS Cartera,
   SUM(Mora9_SaldoCapital)  AS Mora9,
@@ -74,6 +75,7 @@ SELECT
 FROM
   CTE
 GROUP BY
+  PERIODO,
   IdSAsesor
 --ORDER BY
 --  IdSAsesor ASC

@@ -54,12 +54,10 @@ class LoaderStrategicVariational(StrategyLoaderStrategic):
 
         with cls.engine.begin() as conn:
             conn.execute(
-                text("DELETE FROM :Tabla WHERE Periodo = :Periodo"),
-                {"Tabla": table, "Periodo": period}
+                text(f"DELETE FROM {table} WHERE Periodo = :periodo"),
+                {'periodo': period},
             )
-
-        df.to_sql(table, con=cls.engine, if_exists="append", index=False)
-        cls.engine.dispose()
+            df.to_sql(table, con=conn, if_exists="append", index=False)
 
 
 # Contextos

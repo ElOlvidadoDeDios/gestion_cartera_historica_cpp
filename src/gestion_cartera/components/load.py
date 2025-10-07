@@ -12,7 +12,7 @@ from datetime import date
 class Loader(ABC):
 
     @abstractmethod
-    def run(cls, df: pd.DataFrame, table: str, temporality=None):
+    def run(cls, df: pd.DataFrame, table: str):
         pass
 
 
@@ -23,7 +23,7 @@ class StrategyLoaderStrategic(Loader, ABC):
     engine = DatabaseConnection.get_engine('downstream')
     
     @classmethod
-    def run(cls, df: pd.DataFrame, table: str, temporality=None):
+    def run(cls, df: pd.DataFrame, table: str):
         pass
 
 class StrategyLoaderOperational(Loader, ABC):
@@ -40,7 +40,7 @@ class StrategyLoaderOperational(Loader, ABC):
 class LoaderStrategicInitial(StrategyLoaderStrategic):
 
     @classmethod
-    def run(cls, df: pd.DataFrame, table: str, temporality=None):
+    def run(cls, df: pd.DataFrame, table: str):
         df.to_sql(table, con=cls.engine, if_exists='replace', index=False)
         cls.engine.dispose()
 
@@ -48,25 +48,15 @@ class LoaderStrategicInitial(StrategyLoaderStrategic):
 class LoaderStrategicVariational(StrategyLoaderStrategic):
 
     @classmethod
-    def run(cls, df: pd.DataFrame, table: str, temporality: Literal['at_date', 'on_date']):
+    def run(cls, df: pd.DataFrame, table: str):
 
-        if date == 'at_date':
-            temporality = date.today().strftime("%Y%m")
+        period = date.today().strftime("%Y%m")
 
-            with cls.engine.begin() as conn:
-                conn.execute(
-                    text("DELETE FROM :Tabla WHERE Periodo = :Periodo"),
-                    {"Tabla": table, "Periodo": temporality}
-                )
-
-        elif date == 'on_date':
-            temporality = date.today().strftime("%Y%m%d")
-
-            with cls.engine.begin() as conn:
-                conn.execute(
-                    text("DELETE FROM :Tabla WHERE Fecha = :Fecha"),
-                    {"Tabla": table, "Fecha": temporality}
-                )
+        with cls.engine.begin() as conn:
+            conn.execute(
+                text("DELETE FROM :Tabla WHERE Periodo = :Periodo"),
+                {"Tabla": table, "Periodo": period}
+            )
 
         df.to_sql(table, con=cls.engine, if_exists="append", index=False)
         cls.engine.dispose()
@@ -76,7 +66,7 @@ class LoaderStrategicVariational(StrategyLoaderStrategic):
 
 class LoaderStrategic(StrategyLoaderStrategic):
 
-    def __init__(self, strategy: StrategyLoaderStrategic | None = None, temporality = None) -> None:
+    def __init__(self, strategy: StrategyLoaderStrategic | None = None) -> None:
         self._strategy = strategy
 
     @property
@@ -87,8 +77,8 @@ class LoaderStrategic(StrategyLoaderStrategic):
     def strategy(self, strategy):
         self._strategy = strategy
 
-    def run(self, df: pd.DataFrame, table: str, temporality=None) -> None:
-        return self.strategy.run(df, table, temporality)
+    def run(self, df: pd.DataFrame, table: str) -> None:
+        return self.strategy.run(df, table)
 
 
 # Factory
@@ -113,5 +103,5 @@ class LoaderFactory:
 
 if __name__ == '__main__':
     loader_strategic = LoaderFactory.get_loader('strategic')
-    loader_strategic.strategy = LoaderStrategicInitial
+    loader_strategic.strategy = LoaderStrategicVariational
     loader_strategic.run(df, ConfigManager.table.fct.stock)

@@ -19,6 +19,7 @@ FROM CTE_fechas
 
 SELECT
     CTE_PC.Fecha,
+    FORMAT(CTE_PC.Fecha, 'yyyyMM')          As Periodo,
     CTE_PC.IdSAsesor,
     CTE_PC.IdSAgencia,
     ISNULL(NEXO_COL.ColocacionNumReal, 0)   AS ColocacionNumReal,

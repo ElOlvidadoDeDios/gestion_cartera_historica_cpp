@@ -105,9 +105,6 @@ def pipeline_variational() -> None:
     pipeline('strategic', 'dim_asesor', Variant.INITIAL)
     pipeline('strategic', 'fct_stock', Variant.VARIATIONAL)
     pipeline('strategic', 'fct_flow', Variant.VARIATIONAL)
-
-
-def pipeline_creditos_cancelados() -> None:
     pipeline('operational', 'creditos_cancelados', Variant.INITIAL)
 
 

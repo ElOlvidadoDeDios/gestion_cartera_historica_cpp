@@ -36,7 +36,7 @@ SQL = Box({
 
 # Config paths
 PATH_CONFIG_TABLE = Path(PATH_PROJECT, "conf/table.yaml")
-
+PATH_ENV = Path(PATH_PROJECT, ".env")
 
 ### ######
 ### Main

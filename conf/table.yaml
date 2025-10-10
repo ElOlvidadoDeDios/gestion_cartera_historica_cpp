@@ -3,3 +3,5 @@ dim:
 fct:
   flow: fct_flow
   stock: fct_stock
+opr:
+  creditos_cancelados: creditos_cancelados

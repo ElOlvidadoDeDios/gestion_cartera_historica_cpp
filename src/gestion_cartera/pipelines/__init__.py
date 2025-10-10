@@ -7,21 +7,24 @@ import pandas as pd
 from enum import Enum
 from typing import Literal, Optional, Callable
 from dataclasses import dataclass
+from box import Box
 
 
 class Variant(Enum):
     INITIAL = 'initial'
     VARIATIONAL = 'variational'
+    OPERATIONAL = 'operational'
 
 
 STRATEGY_BY_VARIANT = {
     Variant.INITIAL: LoaderStrategicInitial,
-    Variant.VARIATIONAL: LoaderStrategicVariational
+    Variant.VARIATIONAL: LoaderStrategicVariational,
+    Variant.OPERATIONAL: LoaderStrategicInitial,
 }
 
 
 @dataclass(frozen=True)
-class SubjectConfig:
+class ConfigSubject:
     sql: str
     table: object
     transformer_key: Optional[str] = None
@@ -35,29 +38,49 @@ def _get_transformer(transformer_key: Optional[str]) -> Callable:
     return lambda df: transformer.run(df=df)
 
 
-SUBJECTS = {
-    'dim_asesor': SubjectConfig(
-        sql=SQL.STRATEGIC.DIM_ASESOR,
-        table=ConfigManager.table.dim.asesor,
-        transformer_key='dim_asesor',
-    ),
-    'fct_stock': SubjectConfig(
-        sql=SQL.STRATEGIC.FCT_STOCK,
-        table=ConfigManager.table.fct.stock,
-        transformer_key=None,
-    ),
-    'fct_flow': SubjectConfig(
-        sql=SQL.STRATEGIC.FCT_FLOW,
-        table=ConfigManager.table.fct.flow,
-        transformer_key=None,
-    ),
-}
+SUBJECTS = Box({
+    'strategic': {
+        'dim_asesor': ConfigSubject(
+            sql=SQL.STRATEGIC.DIM_ASESOR,
+            table=ConfigManager.table.dim.asesor,
+            transformer_key='dim_asesor',
+        ),
+        'fct_stock': ConfigSubject(
+            sql=SQL.STRATEGIC.FCT_STOCK,
+            table=ConfigManager.table.fct.stock,
+            transformer_key=None,
+        ),
+        'fct_flow': ConfigSubject(
+            sql=SQL.STRATEGIC.FCT_FLOW,
+            table=ConfigManager.table.fct.flow,
+            transformer_key=None,
+        ),
+    },
+    'operational': {
+        'creditos_cancelados': ConfigSubject(
+            sql=SQL.OPERATIONAL.CREDITOS_CANCELADOS,
+            table=ConfigManager.table.opr.creditos_cancelados,
+            transformer_key=None,
+        )
+    },
+})
 
+Domain = Literal['strategic', 'operational']
+SubjectStrategic = Literal['dim_asesor', 'fct_stock', 'fct_flow']
+SubjectOperational = Literal['creditos_cancelados']
 
-def pipeline(subject: Literal['dim_asesor', 'fct_stock', 'fct_flow'], variant: Variant) -> None:
+def pipeline(
+    domain: Domain,
+    subject: SubjectStrategic | SubjectOperational,
+    variant: Variant
+) -> None:
     
     # Preambule
-    cfg = SUBJECTS[subject]
+    try:
+        cfg: ConfigSubject = SUBJECTS[domain][subject]
+    except KeyError as e:
+        disponibles = list(SUBJECTS[domain].keys()) if domain in SUBJECTS else list(SUBJECTS.keys())
+        raise KeyError(f"No existe SUBJECT '{subject}' bajo dominio '{domain}'. Disponibles: {disponibles}") from e
 
     # Extract
     df_extracted = Extractor.run(cfg.sql)
@@ -73,16 +96,20 @@ def pipeline(subject: Literal['dim_asesor', 'fct_stock', 'fct_flow'], variant: V
 
 
 def pipeline_initial() -> None:
-    pipeline('dim_asesor', Variant.INITIAL)
-    pipeline('fct_stock', Variant.INITIAL)
-    pipeline('fct_flow', Variant.INITIAL)
+    pipeline('strategic', 'dim_asesor', Variant.INITIAL)
+    pipeline('strategic', 'fct_stock', Variant.INITIAL)
+    pipeline('strategic', 'fct_flow', Variant.INITIAL)
 
 
 def pipeline_variational() -> None:
-    pipeline('dim_asesor', Variant.INITIAL)
-    pipeline('fct_stock', Variant.VARIATIONAL)
-    pipeline('fct_flow', Variant.VARIATIONAL)
+    pipeline('strategic', 'dim_asesor', Variant.INITIAL)
+    pipeline('strategic', 'fct_stock', Variant.VARIATIONAL)
+    pipeline('strategic', 'fct_flow', Variant.VARIATIONAL)
+
+
+def pipeline_creditos_cancelados() -> None:
+    pipeline('operational', 'creditos_cancelados', Variant.INITIAL)
 
 
 if __name__ == '__main__':
-    pipeline_variational()
+    pipeline_creditos_cancelados()

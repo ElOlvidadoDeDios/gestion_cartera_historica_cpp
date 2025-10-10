@@ -1,5 +1,5 @@
 from gestion_cartera.core.config import ConfigManager
-from gestion_cartera.core import constants
+from gestion_cartera.core.constants import SQL
 from gestion_cartera.components.extract import Extractor
 from gestion_cartera.components.transform import TransformerFactory
 from gestion_cartera.components.load import LoaderFactory, LoaderStrategicInitial, LoaderStrategicVariational
@@ -37,17 +37,17 @@ def _get_transformer(transformer_key: Optional[str]) -> Callable:
 
 SUBJECTS = {
     'dim_asesor': SubjectConfig(
-        sql=constants.SQL_DIM_ASESOR,
+        sql=SQL.STRATEGIC.DIM_ASESOR,
         table=ConfigManager.table.dim.asesor,
         transformer_key='dim_asesor',
     ),
     'fct_stock': SubjectConfig(
-        sql=constants.SQL_FCT_STOCK,
+        sql=SQL.STRATEGIC.FCT_STOCK,
         table=ConfigManager.table.fct.stock,
         transformer_key=None,
     ),
     'fct_flow': SubjectConfig(
-        sql=constants.SQL_FCT_FLOW,
+        sql=SQL.STRATEGIC.FCT_FLOW,
         table=ConfigManager.table.fct.flow,
         transformer_key=None,
     ),
@@ -85,4 +85,4 @@ def pipeline_variational() -> None:
 
 
 if __name__ == '__main__':
-    pipeline_dim_asesor()
+    pipeline_variational()

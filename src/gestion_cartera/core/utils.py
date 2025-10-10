@@ -1,5 +1,3 @@
-from dotenv import load_dotenv
-load_dotenv('.env')
 import os
 from sqlalchemy import create_engine
 from ensure import ensure_annotations

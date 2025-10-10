@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+from gestion_cartera.core.constants import PATH_ENV
+load_dotenv(PATH_ENV)
 import argparse
 from gestion_cartera.pipelines import pipeline_initial, pipeline_variational
 

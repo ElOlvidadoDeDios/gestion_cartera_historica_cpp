@@ -56,7 +56,11 @@ WHERE
 ------
 	T1.PERIODO        = FORMAT(GETDATE(), 'yyyyMM') AND
 	NEXO_GRU.ID_GRUPO =  '04' AND
+
+--- Excluir asesores retirados
     NEXO_PRE.SALDO_PRES <> 0
+	--- Implicancias:
+	--- - Excluir repagos de asesores retirados
 )
 
 --- ############

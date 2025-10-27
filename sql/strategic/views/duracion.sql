@@ -54,7 +54,7 @@ GROUP BY
 SELECT
     T.PERIODO                             AS Periodo,
     T.ID_USER                             AS IdSAsesor,
-    (T.VARIOS / T.NUMERO_OPERACIONES) / 5 AS Duracion
+    T.VARIOS							  AS Varios
 FROM
     CTE T
 GO

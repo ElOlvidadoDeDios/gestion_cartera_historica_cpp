@@ -7,7 +7,7 @@ from box import Box
 ### #####
 
 
-PATH_PROJECT = Path("D:/development_stage/bunisess_intelligence_projects/dile-gestion_cartera-data_project/dile-gestion_cartera-data_engineering/")
+PATH_PROJECT = Path("D:/development_stage/bunisess_intelligence_projects/projects/dile-gestion_cartera-data_project/dile-gestion_cartera-data_engineering/")
 PATH_SQL = Path(PATH_PROJECT, "sql/")
 PATH_SQL_STRATEGIC = Path(PATH_SQL, "strategic/")
 PATH_SQL_OPERATIONAL = Path(PATH_SQL, "operational/")
@@ -43,4 +43,4 @@ PATH_ENV = Path(PATH_PROJECT, ".env")
 ### ######
 
 if __name__ == '__main__':
-    print(SQL_FCT_STOCK)
+    print(PATH_CONFIG_TABLE)

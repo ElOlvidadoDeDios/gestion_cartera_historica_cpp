@@ -25,7 +25,7 @@ SQL = Box({
         'FCT_FLOW': Path(PATH_SQL_STRATEGIC, 'fct_flow.sql').read_text(encoding='utf-8'),
     },
     'OPERATIONAL': {
-        'CREDITOS_CANCELADOS': Path(PATH_SQL_OPERATIONAL, 'opr_creditos_cancelados.sql').read_text(encoding='utf-8'),
+        'CREDITOS_CANCELADOS_NO_RENOVADOS': Path(PATH_SQL_OPERATIONAL, 'opr_creditos_cancelados_no_renovados.sql').read_text(encoding='utf-8'),
     }
 })
 

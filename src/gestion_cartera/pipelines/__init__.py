@@ -57,9 +57,9 @@ SUBJECTS = Box({
         ),
     },
     'operational': {
-        'creditos_cancelados': ConfigSubject(
-            sql=SQL.OPERATIONAL.CREDITOS_CANCELADOS,
-            table=ConfigManager.table.opr.creditos_cancelados,
+        'creditos_cancelados_no_renovados': ConfigSubject(
+            sql=SQL.OPERATIONAL.CREDITOS_CANCELADOS_NO_RENOVADOS,
+            table=ConfigManager.table.opr.creditos_cancelados_no_renovados,
             transformer_key=None,
         )
     },
@@ -67,7 +67,7 @@ SUBJECTS = Box({
 
 Domain = Literal['strategic', 'operational']
 SubjectStrategic = Literal['dim_asesor', 'fct_stock', 'fct_flow']
-SubjectOperational = Literal['creditos_cancelados']
+SubjectOperational = Literal['creditos_cancelados_no_renovados']
 
 def pipeline(
     domain: Domain,
@@ -105,7 +105,7 @@ def pipeline_variational() -> None:
     pipeline('strategic', 'dim_asesor', Variant.INITIAL)
     pipeline('strategic', 'fct_stock', Variant.VARIATIONAL)
     pipeline('strategic', 'fct_flow', Variant.VARIATIONAL)
-    pipeline('operational', 'creditos_cancelados', Variant.INITIAL)
+    pipeline('operational', 'creditos_cancelados_no_renovados', Variant.INITIAL)
 
 
 if __name__ == '__main__':

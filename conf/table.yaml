@@ -5,3 +5,4 @@ fct:
   stock: fct_stock
 opr:
   creditos_cancelados_no_renovados: creditos_cancelados_no_renovados
+  ranking_asesor: ranking_asesor

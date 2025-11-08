@@ -26,6 +26,7 @@ SQL = Box({
     },
     'OPERATIONAL': {
         'CREDITOS_CANCELADOS_NO_RENOVADOS': Path(PATH_SQL_OPERATIONAL, 'opr_creditos_cancelados_no_renovados.sql').read_text(encoding='utf-8'),
+        'RANKING_ASESOR': Path(PATH_SQL_OPERATIONAL, 'opr_ranking_asesor.sql').read_text(encoding='utf-8')
     }
 })
 

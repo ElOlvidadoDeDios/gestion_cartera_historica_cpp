@@ -44,7 +44,13 @@ SELECT
   CASE
     WHEN T1.DIAS_REALES >= 31 THEN T1.SALDO_PRES
     ELSE 0
-  END AS Mora31_SaldoCapital
+  END AS Mora31_SaldoCapital,
+
+  --Saldo capital en Mora mayor a 150 dias
+  CASE
+    WHEN T1.DIAS_REALES >= 151 THEN T1.SALDO_PRES
+    ELSE 0
+  END AS Mora150_SaldoCapital
 
 ------
 FROM
@@ -67,11 +73,12 @@ WHERE
 --==============
 
 SELECT
-  PERIODO                  AS Periodo,
+  PERIODO					AS Periodo,
   IdSAsesor,
-  SUM(SaldoCapital)        AS Cartera,
-  SUM(Mora9_SaldoCapital)  AS Mora9,
-  SUM(Mora31_SaldoCapital) AS Mora31
+  SUM(SaldoCapital)			AS Cartera,
+  SUM(Mora9_SaldoCapital)	AS Mora9,
+  SUM(Mora31_SaldoCapital)	AS Mora31,
+  SUM(Mora150_SaldoCapital)	AS Mora150
 FROM
   CTE
 GROUP BY

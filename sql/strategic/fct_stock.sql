@@ -12,8 +12,10 @@ SELECT
     T.Periodo,
     T.IdSAsesor,
     T.Cartera,
+    T.Cartera_Inicial,
     T.Mora9,
     T.Mora31,
+    T.Mora31_PeriodoAnterior,
     T.Mora150,
     ISNULL(NEXO_DUR.Varios, 0) AS Varios
 FROM CTE_cartera_moras T

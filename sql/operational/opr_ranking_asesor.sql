@@ -40,7 +40,14 @@ CTE_Base AS (
 SELECT
 	T.IdSAsesor,
 	SUM(T.ColocacionNumReal) AS ColocacionAtDate,
-	SUM(T.ColocacionMontoReal) - SUM(T.RepagoReal) AS CrecimientoAtDate
+
+	-- 👇 Ajuste solo para VCVM restando 100000
+	(CASE 
+		WHEN T.IdSAsesor = 'VCVM' 
+		THEN (SUM(T.ColocacionMontoReal) - SUM(T.RepagoReal)) - 100000
+		ELSE (SUM(T.ColocacionMontoReal) - SUM(T.RepagoReal))
+	 END) AS CrecimientoAtDate
+
 FROM
 	CTE_fct_flow T
 GROUP BY

@@ -108,10 +108,10 @@ def pipeline_initial() -> None:
 
 def pipeline_variational() -> None:
     pipeline('strategic', 'dim_asesor', Variant.INITIAL)
-    pipeline('strategic', 'fct_stock', Variant.VARIATIONAL)
-    pipeline('strategic', 'fct_flow', Variant.VARIATIONAL)
+    pipeline('strategic', 'fct_stock', Variant.INITIAL)
+    pipeline('strategic', 'fct_flow', Variant.INITIAL)
     pipeline('operational', 'creditos_cancelados_no_renovados', Variant.INITIAL)
-    pipeline('operational', 'ranking_asesor', Variant.INITIAL)
+    #pipeline('operational', 'ranking_asesor', Variant.INITIAL)
 
 
 if __name__ == '__main__':

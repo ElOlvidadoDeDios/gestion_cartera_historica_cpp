@@ -1,7 +1,7 @@
 WITH
 
 CTE_fechas AS (
-SELECT DISTINCT A.Fecha, 1 AS Llave FROM gc_colocacion A
+SELECT DISTINCT A.Fecha, 1 AS Llave FROM gc_repago A
 ),
 
 CTE_asesores AS (

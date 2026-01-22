@@ -35,8 +35,6 @@ CASE
 		CASE
 			WHEN RIGHT(RTRIM(T_ANA.ID_USER), 1) = '6' THEN '06'
 			WHEN RIGHT(RTRIM(T_ANA.ID_USER), 1) = '7' THEN '07'
-            -- Casos Excepcionales
-            WHEN T_ANA.ID_USER = 'RJULIACA' THEN '06'
 		END
 	ELSE T_ANA.ID_AGE
 END AS IdSAgencia
@@ -64,12 +62,15 @@ FROM
 ------
 WHERE
 ------
-	T_PRE.PERIODO  = FORMAT(GETDATE(), 'yyyyMM') AND
+	T_PRE.PERIODO  = FORMAT(GETDATE(), 'yyyyMM')
 
 --- Excluir asesores retirados
-    T_PTM.SALDO_PRES <> 0
+    AND T_PTM.SALDO_PRES <> 0
 	--- Implicancias:
 	--- - Excluir repagos de asesores retirados
+
+-- Excluir casos excepcionales
+	AND T_USU.ID_USER NOT IN ('RJULI6', 'RJULIACA', 'RLIMA7', 'RQUILLA3', 'RSICUA4')
 )
 
 --- ############
@@ -80,7 +81,8 @@ SELECT DISTINCT
 	IdSAsesor,
 	AsesorNombresApellidos,
     Cargo,
-	IdSAgencia
+	IdSAgencia,
+	ColocacionNumMeta = 30
 FROM
 	CTE
 --ORDER BY

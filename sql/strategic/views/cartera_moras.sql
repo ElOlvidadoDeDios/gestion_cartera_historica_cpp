@@ -23,7 +23,7 @@ SELECT
 ------------
 
 --Periodo
-  T1.PERIODO,
+  T1.PERIODO AS Periodo,
 --Unidad minima operativa
   T1.PAGARE,
 
@@ -63,24 +63,23 @@ FROM
 ------------
 WHERE
 ------------
-  T1.PERIODO        >= FORMAT(DATEADD(MONTH, -1, GETDATE()), 'yyyyMM') AND
+  T1.PERIODO        = FORMAT(GETDATE(), 'yyyyMM') AND
   NEXO_GRU.ID_GRUPO =  '04'
-),
+)
 
---- ************
-	CTE_CARTERAS_MORAS AS (
---- ************
+--- ############
+--- MAIN
+--- ############
 
 ------------
 SELECT
 ------------
-	PERIODO,
+	Periodo,
 	IdSAsesor,
 	SUM(SaldoCapital)         AS Cartera,
 	SUM(Mora9_SaldoCapital)   AS Mora9,
 	SUM(Mora31_SaldoCapital)  AS Mora31,
-	SUM(Mora150_SaldoCapital) AS Mora150,
-	SUM(SaldoCapital) - SUM(Mora150_SaldoCapital) AS Cartera_Inicial
+	SUM(Mora150_SaldoCapital) AS Mora150
 ------------
 FROM
 ------------
@@ -90,43 +89,4 @@ GROUP BY
 ------------
 	PERIODO,
 	IdSAsesor
-),
-
---- ************
-	CTE_CARTERAS_MORAS_ANTERIORES AS (
---- ************
-
-------------
-SELECT
-------------
-	PERIODO AS Periodo,
-	IdSAsesor,
-	Cartera,
-	ISNULL(LAG(Cartera_Inicial) OVER (PARTITION BY IdSAsesor ORDER BY PERIODO), 0) AS Cartera_Inicial,
-	Mora9,
-	Mora31,
-	ISNULL(LAG(Mora31) OVER (PARTITION BY IdSAsesor ORDER BY PERIODO), 0) AS Mora31_PeriodoAnterior,
-	Mora150
-------------
-FROM
-------------
-	CTE_CARTERAS_MORAS
-------------
---ORDER BY
-------------
---  IdSAsesor ASC
-)
-
---- ############
---- MAIN
---- ############
-
-SELECT
-	*
-FROM
-	CTE_CARTERAS_MORAS_ANTERIORES
-WHERE
-	PERIODO = FORMAT(GETDATE(), 'yyyyMM')
---ORDER BY
---  IdSAsesor ASC
 GO

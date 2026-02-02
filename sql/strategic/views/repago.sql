@@ -1,65 +1,86 @@
 GO
 CREATE OR ALTER VIEW gc_repago WITH ENCRYPTION AS
 
---- ############
+--- #################
 --- NOTAS
---- ############
+--- #################
 
---- ############
+--- #################
 --- PREAMBULO
---- ############
+--- #################
 
---- ============
+--- *****************
 --- CTEs
 WITH
---- ============
+--- *****************
 
-CTE AS (
+--- =================
+CTE_AUX_DURACION AS (
+--- =================
 
 ------
 SELECT
 ------
-	T1.FECHA_MOV,
-	T1.CUENTA,
-	T1.PAGARE,
-	T1.OTORGA,
-	T2.ID_USER,
-	T1.CAPITAL
+	T_MOV.FECHA_MOV,
+	T_MOV.CUENTA,
+	T_MOV.PAGARE,
+	T_MOV.OTORGA,
+	T_USU.ID_USER,
+	T_MOV.CAPITAL
 ------
 FROM
 ------
-	PREMOV                          T1
-		INNER JOIN PREEC            NEXO_PRE ON NEXO_PRE.CUENTA = T1.CUENTA       AND NEXO_PRE.PAGARE = T1.PAGARE AND NEXO_PRE.OTORGA = T1.OTORGA AND NEXO_PRE.PERIODO = FORMAT(GETDATE(), 'yyyyMM')
-	INNER JOIN SEGURIDAD.dbo.ANAREC T2       ON T2.ID_ANAREC    = NEXO_PRE.ID_ANA AND T2.FLAG_ANAREC  = 'A'
+	PREMOV T_MOV
+	INNER JOIN PREEC NEXO_PRE
+		ON  NEXO_PRE.CUENTA = T_MOV.CUENTA
+		AND NEXO_PRE.OTORGA = T_MOV.OTORGA
+		AND NEXO_PRE.PAGARE = T_MOV.PAGARE
+		AND NEXO_PRE.PERIODO = '202601'
+	INNER JOIN SEGURIDAD.dbo.ANAREC T_ANA
+		ON  T_ANA.ID_ANAREC = NEXO_PRE.ID_ANA
+		AND T_ANA.FLAG_ANAREC  = 'A'
+	INNER JOIN SEGURIDAD.dbo.USUARIOS T_USU
+		ON  T_USU.ID_USER = T_ANA.ID_USER
 ------
 WHERE
 ------
-	FORMAT(T1.FECHA_MOV, 'yyyyMM') = FORMAT(GETDATE(), 'yyyyMM') AND
-	T1.TIPO_MOV                    != '0001'                     AND
-	NOT EXISTS (
+
+--- Repagos del periodo actual
+	FORMAT(T_MOV.FECHA_MOV, 'yyyyMM') = '202601'
+
+--- Movimiento que no sea por apertura
+	AND T_MOV.TIPO_MOV != '0001'
+
+--- Tipo de documento: VOUCHER ING. (01), NOTA DE ABONO (03)
+	AND T_MOV.TIPO_DOC IN ('01','03')
+
+--- ¿?
+	AND NOT EXISTS (
 		SELECT 1
 		FROM PREMOV A
 		WHERE
-			A.FECHA_MOV = T1.FECHA_MOV AND
-			A.COD_AGE   = T1.COD_AGE   AND
-			A.COD_CAJA  = T1.COD_CAJA  AND
-			A.TIPO_DOC  = T1.TIPO_DOC  AND
-			A.NRO_DOC   = T1.NRO_DOC   AND
+			A.FECHA_MOV = T_MOV.FECHA_MOV AND
+			A.COD_AGE   = T_MOV.COD_AGE   AND
+			A.COD_CAJA  = T_MOV.COD_CAJA  AND
+			A.TIPO_DOC  = T_MOV.TIPO_DOC  AND
+			A.NRO_DOC   = T_MOV.NRO_DOC   AND
 			LEFT(A.TIPO_MOV, 2) = '01'
-	) AND
-	T1.TIPO_DOC IN ('01','03') 
+	)
 
+--- =================
 )
+--- =================
 
---- ############
+
+--- #################
 --- MAIN
---- ############
+--- #################
 
 SELECT
 	CAST(T.FECHA_MOV AS DATE) AS Fecha,
 	T.ID_USER                 AS IdSAsesor,
 	SUM(T.CAPITAL)            AS RepagoReal
-FROM CTE T
+FROM CTE_AUX_DURACION T
 GROUP BY
 	T.FECHA_MOV,
 	T.ID_USER

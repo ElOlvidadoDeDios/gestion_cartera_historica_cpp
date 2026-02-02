@@ -14,12 +14,15 @@ CREATE OR ALTER VIEW gc_tea WITH ENCRYPTION AS
 --- PREAMBULO
 --- ############
 
---- ============
+--- ************
 --- CTEs
 WITH
+--- ************
+
+--- ============
+CTE_AUX_TEA AS (
 --- ============
 
-CTE_AUX AS (
 ------
 SELECT
 ------
@@ -35,10 +38,10 @@ FROM
 ------
     PRESTAMO T_PTM
 	INNER JOIN PREEC T_PRE
-		ON  T_PRE.PERIODO = FORMAT(GETDATE(), 'yyyyMM')
-		AND T_PRE.CUENTA = T_PTM.CUENTA
+		ON  T_PRE.CUENTA = T_PTM.CUENTA
 		AND T_PRE.OTORGA = T_PTM.OTORGA
 		AND T_PRE.PAGARE = T_PTM.PAGARE
+		AND T_PRE.PERIODO = '202601'
 	INNER JOIN SEGURIDAD.dbo.ANAREC T_ANA
 		ON  T_ANA.ID_ANAREC = T_PRE.ID_ANA
 		AND T_ANA.FLAG_ANAREC = 'A'
@@ -47,9 +50,17 @@ FROM
 ------
 WHERE
 ------
+
+--- Quitar creditos castigados
 	T_PTM.TIPO_PROD <> '52'
-	AND FORMAT(T_PTM.OTORGA, 'yyyyMM') = FORMAT(GETDATE(), 'yyyyMM')
+
+--- De creditos otorgados el periodo actual
+	AND FORMAT(T_PTM.OTORGA, 'yyyyMM') = '202601'
+
+--- ============
 )
+--- ============
+
 
 --- ############
 --- MAIN
@@ -58,9 +69,9 @@ WHERE
 SELECT
 	T.PERIODO AS Periodo,
 	T.ID_USER AS IdSAsesor,
-	TEA = SUM(Monto_Prestamo * TEA_INTERES) / NULLIF(SUM(Monto_Prestamo), 0)
+	SUM(Monto_Prestamo * TEA_INTERES) / NULLIF(SUM(Monto_Prestamo), 0) AS TEA
 FROM
-	CTE_AUX T
+	CTE_AUX_TEA T
 GROUP BY
 	T.PERIODO,
 	T.ID_USER

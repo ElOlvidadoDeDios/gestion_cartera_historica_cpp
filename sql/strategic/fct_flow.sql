@@ -1,36 +1,101 @@
+--- ######################
+--- NOTAS
+--- ######################
+
+--- ######################
+--- PREAMBULO
+--- ######################
+
+--- **********************
+--- CTEs
 WITH
+--- **********************
 
-CTE_fechas AS (
-SELECT DISTINCT A.Fecha, 1 AS Llave FROM gc_repago A
-),
 
-CTE_asesores AS (
-SELECT DISTINCT A.IdSAgencia, A.IdSAsesor, 1 AS Llave FROM gc_dim_asesor A
-),
+--- ======================
+CTE_FECHAS AS (
+--- ======================
 
-CTE_producto_cartersiano AS (
-SELECT
-    CTE_fechas.Fecha,
-    CTE_asesores.IdSAsesor,
-    CTE_asesores.IdSAgencia
-FROM CTE_fechas
-    CROSS JOIN CTE_asesores
-)
-
-SELECT
-    CTE_PC.Fecha,
-    FORMAT(CTE_PC.Fecha, 'yyyyMM')          As Periodo,
-    CTE_PC.IdSAsesor,
-    CTE_PC.IdSAgencia,
-    ISNULL(NEXO_COL.ColocacionNumReal, 0)   AS ColocacionNumReal,
-    ISNULL(NEXO_COL.ColocacionMontoReal, 0) As ColocacionMontoReal,
-    ISNULL(NEXO_REP.RepagoReal, 0)          As RepagoReal
+SELECT DISTINCT
+	T.Fecha,
+	1 AS Llave
 FROM
-    CTE_producto_cartersiano      CTE_PC
-    LEFT OUTER JOIN gc_colocacion NEXO_COL ON NEXO_COL.Fecha = CTE_PC.Fecha AND NEXO_COL.IdSAsesor = CTE_PC.IdSAsesor
-    LEFT OUTER JOIN gc_repago     NEXO_REP ON NEXO_REP.Fecha = CTE_PC.Fecha AND NEXO_REP.IdSAsesor = CTE_PC.IdSAsesor
+	gc_repago T
+
+--- ======================
+)
+,
+--- ======================
+
+--- ======================
+CTE_ASESORES AS (
+--- ======================
+
+SELECT DISTINCT
+	T.IdSAgencia,
+	T.IdSAsesor,
+	1 AS Llave
+FROM
+	gc_dim_asesor T
+
+--- ======================
+)
+,
+--- ======================
+
+--- ======================
+CTE_PRODUCTO_CARTESIANO AS (
+--- ======================
+
+SELECT
+    T_FEC.Fecha,
+    T_ASE.IdSAsesor,
+    T_ASE.IdSAgencia
+FROM
+	CTE_FECHAS T_FEC
+    CROSS JOIN CTE_ASESORES T_ASE
+
+--- ======================
+)
+--- ======================
+
+
+--- ######################
+--- MAIN
+--- ######################
+
+
+--------
+SELECT
+--------
+    T_PC.Fecha,
+    FORMAT(T_PC.Fecha, 'yyyyMM')            As Periodo,
+    T_PC.IdSAsesor,
+    T_PC.IdSAgencia,
+    ISNULL(T_COL.ColocacionNumReal, 0)   AS ColocacionNumReal,
+    ISNULL(T_COL.ColocacionMontoReal, 0) As ColocacionMontoReal,
+    ISNULL(T_REP.RepagoReal, 0)          As RepagoReal
+--------
+FROM
+--------
+
+--- Fecha x Asesor (y Agencia)
+    CTE_PRODUCTO_CARTESIANO T_PC
+
+--- Colocacion: numero y monto
+    LEFT OUTER JOIN gc_colocacion T_COL
+		ON  T_COL.Fecha = T_PC.Fecha
+		AND T_COL.IdSAsesor = T_PC.IdSAsesor
+
+--- Repago
+    LEFT OUTER JOIN gc_repago T_REP
+		ON  T_REP.Fecha = T_PC.Fecha
+		AND T_REP.IdSAsesor = T_PC.IdSAsesor
+--------
 ORDER BY
-    CTE_PC.Fecha ASC,
-    CTE_PC.IdSAgencia ASC,
-    CTE_PC.IdSAsesor ASC
+--------
+    T_PC.Fecha ASC,
+    T_PC.IdSAgencia ASC,
+    T_PC.IdSAsesor ASC
+--------
 ;

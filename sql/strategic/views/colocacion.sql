@@ -1,25 +1,28 @@
 GO
 CREATE OR ALTER VIEW gc_colocacion WITH ENCRYPTION AS
 
---- ############
+--- ###################
 --- NOTAS
---- ############
+--- ###################
 
 /*
 - Sobre creditos extornados (improcedentes)
 - Sobre creditos castigados
 */
 
---- ############
+--- ###################
 --- PREAMBULO
---- ############
+--- ###################
 
---- ============
+--- *******************
 --- CTEs
 WITH
---- ============
+--- *******************
 
-CTE AS (
+--- ===================
+CTE_AUX_COLOCACION AS (
+--- ===================
+
 ------
 SELECT
 ------
@@ -36,22 +39,28 @@ FROM
 		ON  T_PRE.CUENTA = T_PTM.CUENTA
 		AND T_PRE.OTORGA = T_PTM.OTORGA
 		AND T_PRE.PAGARE = T_PTM.PAGARE
-		AND T_PRE.PERIODO = FORMAT(GETDATE(), 'yyyyMM')
+		AND T_PRE.PERIODO = '202601'
 	INNER JOIN SEGURIDAD.dbo.ANAREC T_ANA
 		ON  T_ANA.ID_ANAREC = T_PRE.ID_ANA
 		AND T_ANA.FLAG_ANAREC = 'A'
 	INNER JOIN SEGURIDAD.dbo.USUARIOS T_USU
-		ON T_USU.ID_USER = T_ANA.ID_USER
+		ON  T_USU.ID_USER = T_ANA.ID_USER
+	INNER JOIN SEGURIDAD.dbo.GRUPOUSER T_GRU
+		ON  T_GRU.ID_GRUPO = T_USU.ID_GRUPO
+		AND T_GRU.NOM_GRUPO = 'CREDITOS'
 ------
 WHERE
 ------
 	T_PTM.TIPO_PROD <> '52'
-	AND	FORMAT(T_PTM.OTORGA, 'yyyyMM')  = FORMAT(GETDATE(), 'yyyyMM')
-)
+	AND	FORMAT(T_PTM.OTORGA, 'yyyyMM')  = '202601'
 
---- ############
+--- ===================
+)
+--- ===================
+
+--- ###################
 --- MAIN
---- ############
+--- ###################
 
 SELECT
 	CAST(T.OTORGA AS DATE) AS Fecha,
@@ -59,7 +68,7 @@ SELECT
 	COUNT(T.PAGARE)        AS [ColocacionNumReal],
 	SUM(T.MONTO_PRESTAMO)  AS [ColocacionMontoReal]
 FROM
-	CTE T
+	CTE_AUX_COLOCACION T
 GROUP BY
 	T.OTORGA,
 	T.ID_USER

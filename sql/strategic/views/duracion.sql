@@ -1,60 +1,72 @@
 GO
 CREATE OR ALTER VIEW gc_duracion WITH ENCRYPTION AS
 
---- ############
+--- #################
 --- NOTAS
---- ############
+--- #################
 
---- ############
+--- #################
 --- PREAMBULO
---- ############
+--- #################
 
---- ============
+--- *****************
 --- CTEs
 WITH
---- ============
+--- *****************
 
-CTE AS (
+--- =================
+CTE_AUX_DURACION AS (
+--- =================
 
 ------
 SELECT
 ------
-    --Periodo
-    E.PERIODO,
-    --ID del asesor
-    NEXO_ANA.ID_USER,
-    --Varios
-    SUM(NEXO_DED.CAPITAL) AS VARIOS,
-    --Numero de operaciones
-    (SELECT COUNT(PAGARE) FROM PREEC WHERE FORMAT(OTORGA, 'yyyyMM') = FORMAT(GETDATE(), 'yyyyMM') AND ID_ANA=E.ID_ANA) AS NUMERO_OPERACIONES
+
+--- Periodo
+    T_PRE.PERIODO,
+--- ID del asesor
+    T_USU.ID_USER,
+--- Varios
+    SUM(T_DED.CAPITAL) AS VARIOS
 ------
 FROM
 ------
-    PREEC                           E
-    INNER JOIN SEGURIDAD.DBO.ANAREC NEXO_ANA ON NEXO_ANA.ID_ANAREC = E.ID_ANA         AND NEXO_ANA.FLAG_ANAREC              =  'A'
-    INNER JOIN PRESTAMO             NEXO_PRE ON NEXO_PRE.PAGARE    = E.PAGARE         AND FORMAT(NEXO_PRE.OTORGA, 'yyyyMM') = FORMAT(GETDATE(), 'yyyyMM')
-    INNER JOIN PRE_DEDUCESOLI       NEXO_DED ON NEXO_PRE.PAGARE    = NEXO_DED.NRO_SOL AND GLOSA                             =  'Cursos-Capacitación'
+    PRESTAMO T_PTM
+    INNER JOIN PREEC T_PRE
+        ON  T_PRE.CUENTA = T_PTM.CUENTA
+        AND T_PRE.OTORGA = T_PTM.OTORGA
+        AND T_PRE.PAGARE = T_PTM.PAGARE
+        AND T_PRE.PERIODO = '202601'
+    INNER JOIN SEGURIDAD.dbo.ANAREC T_ANA
+        ON  T_ANA.ID_ANAREC = T_PRE.ID_ANA
+        AND T_ANA.FLAG_ANAREC = 'A'
+    INNER JOIN SEGURIDAD.dbo.USUARIOS T_USU
+        ON  T_USU.ID_USER = T_ANA.ID_USER
+    INNER JOIN PRE_DEDUCESOLI T_DED
+        ON  T_PTM.PAGARE = T_DED.NRO_SOL
+        AND GLOSA = 'Cursos-Capacitación'
 ------
 WHERE
 ------
-    PERIODO = FORMAT(GETDATE(), 'yyyyMM')
+	T_PTM.TIPO_PROD <> '52' -- Producto "Castigado"
+    AND FORMAT(T_PTM.OTORGA, 'yyyyMM') = '202601'
 --------
 GROUP BY
 --------
-    E.PERIODO,
-    E.ID_ANA,
-    NEXO_ANA.ID_USER
-
+    T_PRE.PERIODO,
+    T_USU.ID_USER
+--- =================
 )
+--- =================
 
---- ############
+--- #################
 --- MAIN
---- ############
+--- #################
 
 SELECT
-    T.PERIODO                             AS Periodo,
-    T.ID_USER                             AS IdSAsesor,
-    T.VARIOS							  AS Varios
+    T.PERIODO AS Periodo,
+    T.ID_USER AS IdSAsesor,
+    T.VARIOS  AS Varios
 FROM
-    CTE T
+    CTE_AUX_DURACION T
 GO

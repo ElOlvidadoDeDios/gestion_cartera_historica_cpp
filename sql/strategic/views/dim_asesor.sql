@@ -25,14 +25,27 @@ SELECT
 --- Periodo
 	T_PRE.PERIODO AS Periodo,
 
---ID Agencia
+--- ID Agencia
+
 	CASE
+
+	--- Distinguir agencia digital en agencia juliaca y agencia lima
 		WHEN T_ANA.ID_AGE = '98' THEN
 			CASE
 				WHEN RIGHT(RTRIM(T_ANA.ID_USER), 1) = '6' THEN '06'
 				WHEN RIGHT(RTRIM(T_ANA.ID_USER), 1) = '7' THEN '07'
 			END
+
+	--- Distinguir agencia wanchaq en agencia wanchaq y agencia magisterio
+		WHEN T_ANA.ID_AGE = '01' THEN
+			CASE
+				WHEN RIGHT(RTRIM(T_ANA.ID_USER), 1) <> '9' THEN '01'
+				WHEN RIGHT(RTRIM(T_ANA.ID_USER), 1) = '9' THEN '09'
+			END
+
+	--- Mantener mismo IdSAgencia para el resto de agencias
 		ELSE T_ANA.ID_AGE
+
 	END AS IdSAgencia,
 
 --- ID asesor
@@ -63,7 +76,7 @@ FROM
 ------
 WHERE
 ------
-	T_PRE.PERIODO  = '202601'
+	T_PRE.PERIODO  = '202602'
 
 -- Excluir casos excepcionales
 	AND T_USU.ID_USER NOT IN ('RJULI6', 'RJULIACA', 'RLIMA7', 'RQUILLA3', 'RSICUA4')

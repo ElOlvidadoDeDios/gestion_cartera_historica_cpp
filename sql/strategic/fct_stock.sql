@@ -51,6 +51,16 @@ CTE_TEA AS (
 SELECT * FROM gc_tea
 
 --- ======================
+),
+--- ======================
+
+--- ======================
+CTE_SOCIOS AS (
+--- ======================
+
+SELECT * FROM gc_socios
+
+--- ======================
 )
 --- ======================
 
@@ -70,7 +80,9 @@ SELECT
     T_CAR.Mora31,
     T_CAR.Mora150,
     ISNULL(T_DUR.Varios, 0) AS Varios,
-    ISNULL(T_TEA.TEA, 0) AS TEA
+    ISNULL(T_TEA.TEA, 0) AS TEA,
+    T_SOC.NroSocios,
+    T_SOC.NroSociosAnterior
 ------
 FROM
 ------
@@ -83,6 +95,9 @@ FROM
     LEFT JOIN CTE_TEA T_TEA
         ON  T_TEA.Periodo = T_CAR.Periodo
         AND T_TEA.IdSAsesor = T_CAR.IdSAsesor
+    LEFT JOIN CTE_SOCIOS T_SOC
+        ON  T_SOC.Periodo = T_CAR.Periodo
+        AND T_SOC.IdSAsesor = T_CAR.IdSAsesor
 --------
 ORDER BY
 --------

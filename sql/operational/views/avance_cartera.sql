@@ -13,14 +13,21 @@ CREATE OR ALTER VIEW gc_avance_cartera WITH ENCRYPTION AS
 --- PREAMBULO
 --- ######################
 
+--- **********************
+--- CTEs
+WITH
+--- **********************
 
---- ######################
---- MAIN
---- ######################
+--- ======================
+CTE_AUX_AVANCE_CARTERA AS (
+--- ======================
 
 ------------
 SELECT
 ------------
+	T_PRE.CUENTA,
+	T_PRE.OTORGA,
+	T_PRE.PAGARE,
 	T_USU.ID_USER,
 	T_SOC.RAZON_SOCIAL,
     T_SOC.TLF_CEL1,
@@ -69,6 +76,21 @@ WHERE
 ------------
 	T_PRE.PERIODO = FORMAT(GETDATE(), 'yyyyMM')
 	AND T_PTM.SALDO_PRES > 0 -- Excluir creditos cancelados
+
+--- ======================
+)
+--- ======================
+
+--- ######################
+--- MAIN
+--- ######################
+
+SELECT
+	*,
+	Avance = CUOTAS_CANCELADOS * 1.0 / CUOTAS_TOTAL
+FROM
+	CTE_AUX_AVANCE_CARTERA
+
 --- ####################################################
 --- ####################################################
 --- ####################################################

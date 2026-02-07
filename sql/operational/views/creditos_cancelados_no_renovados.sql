@@ -175,7 +175,7 @@ SELECT
 ------------
     T.Fecha_Ultimo_Pago AS Fecha_Cancelacion,
     T.IdSAsesor,
-    T.CUENTA AS Cuenta,
+    RIGHT(RTRIM(T.CUENTA), 6) AS Cuenta,
     T.Socio,
     T.PAGARE AS Pagare,
     T.Producto,

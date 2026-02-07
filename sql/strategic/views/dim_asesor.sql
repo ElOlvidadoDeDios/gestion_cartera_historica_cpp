@@ -5,6 +5,11 @@ CREATE OR ALTER VIEW gc_dim_asesor WITH ENCRYPTION AS
 --- NOTAS
 --- ###############
 
+/*
+Recuperados de tramo de mora superior al de un recuperador de agencia
+se crean dentro de la agencia molino. Asi que hay que excluir a estos.
+*/
+
 --- ###############
 --- PREAMBLE
 --- ###############
@@ -79,7 +84,10 @@ WHERE
 	T_PRE.PERIODO  = '202602'
 
 -- Excluir casos excepcionales
-	AND T_USU.ID_USER NOT IN ('RJULI6', 'RJULIACA', 'RLIMA7', 'RQUILLA3', 'RSICUA4')
+	AND T_USU.ID_USER NOT IN (
+	'RJULI6', 'RJULIACA', 'RLIMA7', 'RQUILLA3', 'RSICUA4' -- Carteras de recuperacion fuera de agencia
+	, 'LHR5', 'HTEJ5', 'TKPN5', 'GHVJ5' -- Recuperados de tramo de mora superior al de un recuperador de agencia
+	)
 )
 
 --- ###############

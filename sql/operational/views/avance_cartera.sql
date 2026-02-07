@@ -25,16 +25,16 @@ CTE_AUX_AVANCE_CARTERA AS (
 ------------
 SELECT
 ------------
-	T_PRE.CUENTA,
-	T_PRE.OTORGA,
-	T_PRE.PAGARE,
-	T_USU.ID_USER,
-	T_SOC.RAZON_SOCIAL,
-    T_SOC.TLF_CEL1,
-    T_SOC.TLF_CEL2,
-    T_SOC.TLF_FIJO1,
-    T_SOC.TLF_FIJO2,
-	CUOTAS_TOTAL = (
+	RIGHT(RTRIM(T_PRE.CUENTA), 6) AS [Cuenta],
+	CAST(T_PRE.OTORGA AS DATE) AS [Fecha de Otorgamiento],
+	T_PRE.PAGARE AS [Pagare],
+	T_USU.ID_USER AS [IdSAsesor],
+	T_SOC.RAZON_SOCIAL AS [Socio],
+    T_SOC.TLF_CEL1 AS [Celular 1],
+    T_SOC.TLF_CEL2 AS [Celular 2],
+    T_SOC.TLF_FIJO1 AS [Telefono 1],
+    T_SOC.TLF_FIJO2 [Telefono 2],
+	[Cuotas Total] = (
 		SELECT
 			COUNT(NRO_CUO)
 		FROM PRECUO A
@@ -43,7 +43,7 @@ SELECT
 			AND A.OTORGA = T_PRE.OTORGA
 			AND A.PAGARE = T_PRE.PAGARE
 	),
-	CUOTAS_CANCELADOS = (
+	[Cuotas Canceladas] = (
 		SELECT
 			COUNT(1)
 		FROM PRECUO A
@@ -87,7 +87,7 @@ WHERE
 
 SELECT
 	*,
-	Avance = CUOTAS_CANCELADOS * 1.0 / CUOTAS_TOTAL
+	[Avance Cartera] = [Cuotas Canceladas] * 1.0 / [Cuotas Total]
 FROM
 	CTE_AUX_AVANCE_CARTERA
 

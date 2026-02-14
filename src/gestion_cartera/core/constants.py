@@ -40,6 +40,37 @@ SQL = Box({
 PATH_CONFIG_TABLE = Path(PATH_PROJECT, "conf/table.yaml")
 PATH_ENV = Path(PATH_PROJECT, ".env")
 
+
+### ######
+### Participantes del programa "DILE Acompania"
+### ######
+
+PARTICIPANTES: set[str] = {
+"OME       ",
+"FVDF2     ",
+"CVHJ1     ",
+"RHJC2     ",
+"CHF3      ",
+"CLISBETH  ",
+"FCRD4     ",
+"MCT4      ",
+"MPL4      ",
+"MKBM5     ",
+"PZSV5     ",
+"QLR5      ",
+"ACJ6      ",
+"ARL6      ",
+"HCDA6     ",
+"PMLE6     ",
+"VHUAYAPA6 ",
+"VMLL6     ",
+"AMJ8      ",
+"FAW8      ",
+"FHRA8     ",
+"PCMA8     ",
+"PPRL8     ",
+}
+
 ### ######
 ### Main
 ### ######

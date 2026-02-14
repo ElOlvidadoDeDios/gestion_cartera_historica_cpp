@@ -3,6 +3,9 @@ import pandas as pd
 from enum import Enum
 from typing import Literal, Union, Sequence
 from gestion_cartera.components.extract import Extractor
+from gestion_cartera.core.constants import PARTICIPANTES
+
+from gestion_cartera.core import constants
 
 
 # Producto
@@ -35,8 +38,16 @@ class TransformerDimAsesor(Transformer):
 
 
     @staticmethod
+    def _run_participantes(df: pd.DataFrame) -> pd.DataFrame:
+        df = df.copy()
+        df['Participante'] = df['IdSAsesor'].isin(PARTICIPANTES)
+        return df
+
+
+    @staticmethod
     def run(df: pd.DataFrame) -> pd.DataFrame:
         df = TransformerDimAsesor._run_alias_asesor(df)
+        df = TransformerDimAsesor._run_participantes(df)
         return df
 
 
@@ -58,5 +69,6 @@ class TransformerFactory:
 
 
 if __name__ == '__main__':
-    df = Extractor.run(constants.SQL_DIM_ASESOR)
-    df_loaded['Asesor'] = df_loaded['AsesorNombresApellidos'].apply(_alias_asesor)
+    df = Extractor.run(constants.SQL.STRATEGIC.DIM_ASESOR)
+    transformer = TransformerDimAsesor()
+    df_transformed = transformer.run(df)

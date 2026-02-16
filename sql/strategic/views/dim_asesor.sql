@@ -83,7 +83,10 @@ WHERE
 ------
 	T_PRE.PERIODO  = '202602'
 
--- Excluir casos excepcionales
+--- Considerar solo asesores vigentes
+	AND T_PRE.SALDO_PRES > 0
+
+--- Excluir casos excepcionales
 	AND T_USU.ID_USER NOT IN (
 	'RJULI6', 'RJULIACA', 'RLIMA7', 'RQUILLA3', 'RSICUA4' -- Carteras de recuperacion fuera de agencia
 	, 'LHR5', 'HTEJ5', 'TKPN5', 'GHVJ5', 'OTA5', 'SDHF5', 'CMN5' -- Recuperados de tramo de mora superior al de un recuperador de agencia

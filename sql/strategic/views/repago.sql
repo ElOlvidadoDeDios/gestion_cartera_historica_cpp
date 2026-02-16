@@ -31,13 +31,19 @@ SELECT
 FROM
 ------
 	PREMOV T_MOV
-	INNER JOIN PREEC NEXO_PRE
-		ON  NEXO_PRE.CUENTA = T_MOV.CUENTA
-		AND NEXO_PRE.OTORGA = T_MOV.OTORGA
-		AND NEXO_PRE.PAGARE = T_MOV.PAGARE
-		AND NEXO_PRE.PERIODO = '202601'
+	INNER JOIN PREEC T_PRE
+		ON  T_PRE.CUENTA = T_MOV.CUENTA
+		AND T_PRE.OTORGA = T_MOV.OTORGA
+		AND T_PRE.PAGARE = T_MOV.PAGARE
+		AND T_PRE.PERIODO = '202602'
+		/*
+		Aunque el reporte de indicadores de crecimiento de analistas sigue monstrando repagos como unica informacion
+		de asesores retirados, secretaria no considera a dichos asesores en el calculo de bonos.
+		*/
+		AND T_PRE.SALDO_PRES > 0
+
 	INNER JOIN SEGURIDAD.dbo.ANAREC T_ANA
-		ON  T_ANA.ID_ANAREC = NEXO_PRE.ID_ANA
+		ON  T_ANA.ID_ANAREC = T_PRE.ID_ANA
 		AND T_ANA.FLAG_ANAREC  = 'A'
 	INNER JOIN SEGURIDAD.dbo.USUARIOS T_USU
 		ON  T_USU.ID_USER = T_ANA.ID_USER
@@ -46,7 +52,7 @@ WHERE
 ------
 
 --- Repagos del periodo actual
-	FORMAT(T_MOV.FECHA_MOV, 'yyyyMM') = '202601'
+	FORMAT(T_MOV.FECHA_MOV, 'yyyyMM') = '202602'
 
 --- Movimiento que no sea por apertura
 	AND T_MOV.TIPO_MOV != '0001'

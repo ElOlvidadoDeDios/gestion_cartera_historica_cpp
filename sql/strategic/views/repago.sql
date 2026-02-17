@@ -36,12 +36,6 @@ FROM
 		AND T_PRE.OTORGA = T_MOV.OTORGA
 		AND T_PRE.PAGARE = T_MOV.PAGARE
 		AND T_PRE.PERIODO = '202602'
-		/*
-		Aunque el reporte de indicadores de crecimiento de analistas sigue monstrando repagos como unica informacion
-		de asesores retirados, secretaria no considera a dichos asesores en el calculo de bonos.
-		*/
-		AND T_PRE.SALDO_PRES > 0
-
 	INNER JOIN SEGURIDAD.dbo.ANAREC T_ANA
 		ON  T_ANA.ID_ANAREC = T_PRE.ID_ANA
 		AND T_ANA.FLAG_ANAREC  = 'A'

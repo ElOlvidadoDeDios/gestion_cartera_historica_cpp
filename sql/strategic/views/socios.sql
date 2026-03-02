@@ -51,7 +51,7 @@ FROM
 ------------
 WHERE
 ------------
-	T_PRE.PERIODO IN ('202601', '202602')
+	T_PRE.PERIODO IN ('202602', '202603')
 	AND T_PRE.SALDO_PRES > 0 -- Excluir socios que al cierre no tengan saldo
 ------------
 GROUP BY
@@ -111,7 +111,7 @@ FROM
 ------------
 WHERE
 ------------
-	T.PERIODO = '202602'
+	T.PERIODO = '202603'
 
 --- ####################################################
 --- ####################################################

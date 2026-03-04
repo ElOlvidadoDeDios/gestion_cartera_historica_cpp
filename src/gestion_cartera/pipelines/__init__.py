@@ -121,8 +121,8 @@ def pipeline_operational() -> None:
     pipeline('operational', 'avance_cartera', Variant.INITIAL)
     pipeline('operational', 'ranking_asesor', Variant.OPERATIONAL)
 
-#def pipeline_operational_ranking_asesor() -> None:
-#    pipeline('operational', 'ranking_asesor', Variant.INITIAL)
+def pipeline_operational_ranking_asesor() -> None:
+    pipeline('operational', 'ranking_asesor', Variant.INITIAL)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,1 @@
+SELECT * FROM dbo.gc_cartera_agencia;

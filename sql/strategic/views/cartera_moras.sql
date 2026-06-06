@@ -71,7 +71,8 @@ FROM
 ------------
 WHERE
 ------------
-	T_PRE.PERIODO = '202603'
+--poner periodo anterior
+	T_PRE.PERIODO = '202606'
 )
 
 --- ######################

@@ -7,3 +7,6 @@ opr:
   creditos_cancelados_no_renovados: creditos_cancelados_no_renovados
   ranking_asesor: ranking_asesor
   avance_cartera: avance_cartera
+
+  cartera_agencia: fct_stock_manubl_agencia_month
+  cartera_asesor: fct_stock_manubl_asesor_month

@@ -1,38 +1,40 @@
-# Mapeos explícitos para homologación de variables entre Origen y Destino
-MAPA_AGENCIA = {
-    "Periodo": "Periodo",
-    "IdSAgencia": "CodAgencia",
-    "CarteraInicial": "SaldoTotalReal",
-    "MetaMoraCPP": "MetaMora9",
-    "MetaMoraDeficiente": "MetaMora31",
-}
+from src.core.config import DBConfig
 
-MAPA_ASESOR = {
-    "Periodo": "Periodo",
-    "IdSAsesor": "CodAsesor",
-    "CarteraInicial": "SaldoTotalReal",
-    "Mora9Meta": "MetaMora9",
-    "Mora31Meta": "MetaMora31",
-}
-
-# Consultas de extracción parametrizadas por Periodo (?) para optimizar velocidad
-QUERY_EXTRACT_STOCK = """
-SELECT Periodo, CodAsesor, CodAgencia, SaldoTotalReal, SaldoMora9Real, 
-       SaldoMora31Real, SaldoMora150Real, NumeroSociosReal, NumeroSociosAnterior
-FROM dbo.vw_dwh_fct_stock_mensual 
+# Consultas de extracción dinámicas parametrizadas por Periodo
+QUERY_EXTRACT_ASESOR = f"""
+SELECT Periodo, CodAsesor, AsesorNombresApellidos, Cargo, CodAgencia
+FROM {DBConfig.VW_SRC_ASESOR}
 WHERE Periodo = ?;
 """
 
-QUERY_EXTRACT_FLOW = """
+QUERY_EXTRACT_STOCK = f"""
+SELECT Periodo, CodAsesor, CodAgencia, SaldoTotalReal, SaldoMora9Real, 
+       SaldoMora31Real, SaldoMora150Real, NumeroSociosReal, NumeroSociosAnterior
+FROM {DBConfig.VW_SRC_STOCK} 
+WHERE Periodo = ?;
+"""
+
+QUERY_EXTRACT_FLOW = f"""
 SELECT Fecha, CodAsesor, CodAgencia, SaldoCarteraReal, MontoColocacionReal, 
        NumColocacionesReal, MontoRepagoReal
-FROM dbo.vw_dwh_fct_flow_diario 
+FROM {DBConfig.VW_SRC_FLOW} 
 WHERE CONVERT(CHAR(6), Fecha, 112) = ?;
 """
 
-# Consultas Upsert (MERGE) para la inyección limpia en el DWH local
-QUERY_LOAD_STOCK = """
-MERGE dbo.fct_stock_mensual AS T
+# Consultas Upsert (MERGE) - Garantizan la protección del histórico sin borrar días anteriores
+QUERY_LOAD_ASESOR = f"""
+MERGE {DBConfig.TBL_DWH_ASESOR} AS T
+USING (SELECT ? AS CodAsesor, ? AS Periodo) AS S
+ON (T.CodAsesor = S.CodAsesor AND T.Periodo = S.Periodo)
+WHEN MATCHED THEN
+    UPDATE SET T.AsesorNombresApellidos = ?, T.Cargo = ?, T.CodAgencia = ?
+WHEN NOT MATCHED THEN
+    INSERT (CodAsesor, Periodo, AsesorNombresApellidos, Cargo, CodAgencia)
+    VALUES (S.CodAsesor, S.Periodo, ?, ?, ?);
+"""
+
+QUERY_LOAD_STOCK = f"""
+MERGE {DBConfig.TBL_DWH_STOCK} AS T
 USING (SELECT ? AS Periodo, ? AS CodAsesor) AS S
 ON (T.Periodo = S.Periodo AND T.CodAsesor = S.CodAsesor)
 WHEN MATCHED THEN
@@ -46,8 +48,8 @@ WHEN NOT MATCHED THEN
     VALUES (S.Periodo, S.CodAsesor, ?, ?, ?, ?, ?, ?, ?);
 """
 
-QUERY_LOAD_FLOW = """
-MERGE dbo.fct_flow_diario AS T
+QUERY_LOAD_FLOW = f"""
+MERGE {DBConfig.TBL_DWH_FLOW} AS T
 USING (SELECT ? AS Fecha, ? AS CodAsesor) AS S
 ON (T.Fecha = S.Fecha AND T.CodAsesor = S.CodAsesor)
 WHEN MATCHED THEN

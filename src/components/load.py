@@ -1,16 +1,43 @@
 import pandas as pd
 import logging
 from src.core.config import DBConfig
-from src.core.constants import QUERY_LOAD_STOCK, QUERY_LOAD_FLOW
+from src.core.constants import QUERY_LOAD_ASESOR, QUERY_LOAD_STOCK, QUERY_LOAD_FLOW
 
 
 class Loader:
     @staticmethod
+    def load_dim_asesor(df: pd.DataFrame):
+        if df.empty:
+            return
+        logging.info(
+            f"Actualizando {len(df)} registros en {DBConfig.TBL_DWH_ASESOR}..."
+        )
+        params = []
+        for _, row in df.iterrows():
+            params.append(
+                (
+                    row["CodAsesor"],
+                    row["Periodo"],
+                    row["AsesorNombresApellidos"],
+                    row["Cargo"],
+                    row["CodAgencia"],
+                    row["AsesorNombresApellidos"],
+                    row["Cargo"],
+                    row["CodAgencia"],
+                )
+            )
+        with DBConfig.get_dwh_connection() as conn:
+            with conn.cursor() as cursor:
+                cursor.fast_executemany = True
+                cursor.executemany(QUERY_LOAD_ASESOR, params)
+                conn.commit()
+        logging.info("Dimension dim_asesor sincronizada con exito.")
+
+    @staticmethod
     def load_stock_mensual(df: pd.DataFrame):
         if df.empty:
-            logging.warning("Sin datos de Stock procesados para insertar.")
             return
-
+        logging.info(f"Actualizando {len(df)} registros en {DBConfig.TBL_DWH_STOCK}...")
         params = []
         for _, row in df.iterrows():
             params.append(
@@ -33,20 +60,18 @@ class Loader:
                     row["NumeroSociosAnterior"],
                 )
             )
-
         with DBConfig.get_dwh_connection() as conn:
             with conn.cursor() as cursor:
                 cursor.fast_executemany = True
                 cursor.executemany(QUERY_LOAD_STOCK, params)
                 conn.commit()
-        logging.info("Inyeccion incremental en fct_stock_mensual finalizada con éxito.")
+        logging.info("Tabla fct_stock_mensual actualizada incrementalmente.")
 
     @staticmethod
     def load_flow_diario(df: pd.DataFrame):
         if df.empty:
-            logging.warning("Sin datos de Flujo procesados para insertar.")
             return
-
+        logging.info(f"Actualizando {len(df)} registros en {DBConfig.TBL_DWH_FLOW}...")
         params = []
         for _, row in df.iterrows():
             params.append(
@@ -65,10 +90,9 @@ class Loader:
                     row["MontoRepagoReal"],
                 )
             )
-
         with DBConfig.get_dwh_connection() as conn:
             with conn.cursor() as cursor:
                 cursor.fast_executemany = True
                 cursor.executemany(QUERY_LOAD_FLOW, params)
                 conn.commit()
-        logging.info("Inyeccion incremental en fct_flow_diario finalizada con éxito.")
+        logging.info("Tabla fct_flow_diario actualizada incrementalmente sin perdidas.")

@@ -4,15 +4,26 @@ import logging
 
 class Transformer:
     @staticmethod
+    def clean_asesor_data(df: pd.DataFrame) -> pd.DataFrame:
+        if df.empty:
+            return df
+        logging.info("Limpiando datos de Asesores...")
+        df = df.copy()
+        df["Periodo"] = df["Periodo"].astype(str).str.strip()
+        df["CodAsesor"] = df["CodAsesor"].astype(str).str.strip()
+        df["AsesorNombresApellidos"] = (
+            df["AsesorNombresApellidos"].astype(str).str.strip()
+        )
+        df["Cargo"] = df["Cargo"].astype(str).str.strip()
+        df["CodAgencia"] = df["CodAgencia"].astype(str).str.strip()
+        return df
+
+    @staticmethod
     def clean_stock_data(df: pd.DataFrame) -> pd.DataFrame:
         if df.empty:
             return df
-        logging.info("Iniciando depuracion y mapeo de Stock Mensual...")
+        logging.info("Iniciando depuracion de Stock Mensual...")
         df = df.copy()
-
-        # Ejemplo de aplicación estructural del mapa si la consulta lo requiere
-        # df = df.rename(columns=MAPA_ASESOR)
-
         df["Periodo"] = df["Periodo"].astype(str).str.strip()
         df["CodAsesor"] = df["CodAsesor"].astype(str).str.strip()
         df["CodAgencia"] = df["CodAgencia"].astype(str).str.strip()
@@ -32,9 +43,8 @@ class Transformer:
     def clean_flow_data(df: pd.DataFrame) -> pd.DataFrame:
         if df.empty:
             return df
-        logging.info("Iniciando depuracion y mapeo de Flujo Diario...")
+        logging.info("Iniciando depuracion de Flujo Diario...")
         df = df.copy()
-
         df["Fecha"] = pd.to_datetime(df["Fecha"]).dt.date
         df["CodAsesor"] = df["CodAsesor"].astype(str).str.strip()
         df["CodAgencia"] = df["CodAgencia"].astype(str).str.strip()

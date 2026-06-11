@@ -6,7 +6,17 @@ load_dotenv()
 
 
 class DBConfig:
-    PERIODO = os.getenv("PERIODO").strip()
+    PERIODO = os.getenv("PERIODO", "202606").strip()
+
+    # Vistas de Origen (TRANSACMIF)
+    VW_SRC_ASESOR = os.getenv("VW_SRC_ASESOR", "dbo.vw_dwh_dim_asesor").strip()
+    VW_SRC_STOCK = os.getenv("VW_SRC_STOCK", "dbo.vw_dwh_fct_stock_mensual").strip()
+    VW_SRC_FLOW = os.getenv("VW_SRC_FLOW", "dbo.vw_dwh_fct_flow_diario").strip()
+
+    # Tablas de Destino (DWH_Gestion_Cartera)
+    TBL_DWH_ASESOR = os.getenv("TBL_DWH_ASESOR", "dbo.dim_asesor").strip()
+    TBL_DWH_STOCK = os.getenv("TBL_DWH_STOCK", "dbo.fct_stock_mensual").strip()
+    TBL_DWH_FLOW = os.getenv("TBL_DWH_FLOW", "dbo.fct_flow_diario").strip()
 
     @staticmethod
     def get_source_connection():

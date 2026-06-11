@@ -1,7 +1,11 @@
 import logging
+import warnings
 from src.components.extract import Extractor
 from src.components.transform import Transformer
 from src.components.load import Loader
+
+# FILTRO DE SEGURIDAD: Silencia las advertencias estéticas de Pandas por no usar SQLAlchemy
+warnings.filterwarnings("ignore", category=UserWarning, module="pandas")
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"

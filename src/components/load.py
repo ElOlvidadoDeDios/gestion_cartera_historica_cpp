@@ -12,20 +12,21 @@ class Loader:
         logging.info(
             f"Actualizando {len(df)} registros en {DBConfig.TBL_DWH_ASESOR}..."
         )
-        params = []
-        for _, row in df.iterrows():
-            params.append(
-                (
-                    row["CodAsesor"],
-                    row["Periodo"],
-                    row["AsesorNombresApellidos"],
-                    row["Cargo"],
-                    row["CodAgencia"],
-                    row["AsesorNombresApellidos"],
-                    row["Cargo"],
-                    row["CodAgencia"],
-                )
+
+        # OPTIMIZACIÓN: Creación masiva de parámetros usando zip nativo (Evita la lentitud de iterrows)
+        params = list(
+            zip(
+                df["CodAsesor"],
+                df["Periodo"],
+                df["AsesorNombresApellidos"],
+                df["Cargo"],
+                df["CodAgencia"],
+                df["AsesorNombresApellidos"],
+                df["Cargo"],
+                df["CodAgencia"],
             )
+        )
+
         with DBConfig.get_dwh_connection() as conn:
             with conn.cursor() as cursor:
                 cursor.fast_executemany = True
@@ -38,28 +39,29 @@ class Loader:
         if df.empty:
             return
         logging.info(f"Actualizando {len(df)} registros en {DBConfig.TBL_DWH_STOCK}...")
-        params = []
-        for _, row in df.iterrows():
-            params.append(
-                (
-                    row["Periodo"],
-                    row["CodAsesor"],
-                    row["CodAgencia"],
-                    row["SaldoTotalReal"],
-                    row["SaldoMora9Real"],
-                    row["SaldoMora31Real"],
-                    row["SaldoMora150Real"],
-                    row["NumeroSociosReal"],
-                    row["NumeroSociosAnterior"],
-                    row["CodAgencia"],
-                    row["SaldoTotalReal"],
-                    row["SaldoMora9Real"],
-                    row["SaldoMora31Real"],
-                    row["SaldoMora150Real"],
-                    row["NumeroSociosReal"],
-                    row["NumeroSociosAnterior"],
-                )
+
+        # OPTIMIZACIÓN: Estructuración de tuplas duplicadas para el MERGE en microsegundos
+        params = list(
+            zip(
+                df["Periodo"],
+                df["CodAsesor"],
+                df["CodAgencia"],
+                df["SaldoTotalReal"],
+                df["SaldoMora9Real"],
+                df["SaldoMora31Real"],
+                df["SaldoMora150Real"],
+                df["NumeroSociosReal"],
+                df["NumeroSociosAnterior"],
+                df["CodAgencia"],
+                df["SaldoTotalReal"],
+                df["SaldoMora9Real"],
+                df["SaldoMora31Real"],
+                df["SaldoMora150Real"],
+                df["NumeroSociosReal"],
+                df["NumeroSociosAnterior"],
             )
+        )
+
         with DBConfig.get_dwh_connection() as conn:
             with conn.cursor() as cursor:
                 cursor.fast_executemany = True
@@ -72,24 +74,25 @@ class Loader:
         if df.empty:
             return
         logging.info(f"Actualizando {len(df)} registros en {DBConfig.TBL_DWH_FLOW}...")
-        params = []
-        for _, row in df.iterrows():
-            params.append(
-                (
-                    row["Fecha"],
-                    row["CodAsesor"],
-                    row["CodAgencia"],
-                    row["SaldoCarteraReal"],
-                    row["MontoColocacionReal"],
-                    row["NumColocacionesReal"],
-                    row["MontoRepagoReal"],
-                    row["CodAgencia"],
-                    row["SaldoCarteraReal"],
-                    row["MontoColocacionReal"],
-                    row["NumColocacionesReal"],
-                    row["MontoRepagoReal"],
-                )
+
+        # OPTIMIZACIÓN: Alta velocidad de procesamiento para el volumen transaccional diario
+        params = list(
+            zip(
+                df["Fecha"],
+                df["CodAsesor"],
+                df["CodAgencia"],
+                df["SaldoCarteraReal"],
+                df["MontoColocacionReal"],
+                df["NumColocacionesReal"],
+                df["MontoRepagoReal"],
+                df["CodAgencia"],
+                df["SaldoCarteraReal"],
+                df["MontoColocacionReal"],
+                df["NumColocacionesReal"],
+                df["MontoRepagoReal"],
             )
+        )
+
         with DBConfig.get_dwh_connection() as conn:
             with conn.cursor() as cursor:
                 cursor.fast_executemany = True

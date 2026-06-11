@@ -20,6 +20,7 @@ class DBConfig:
 
     @staticmethod
     def get_source_connection():
+        """Conexión al Core Transaccional con credenciales específicas"""
         conn_str = (
             f"DRIVER={{ODBC Driver 17 for SQL Server}};"
             f"SERVER={os.getenv('SRC_SERVER')};"
@@ -27,15 +28,19 @@ class DBConfig:
             f"UID={os.getenv('SRC_UID')};"
             f"PWD={os.getenv('SRC_PWD')};"
         )
-        return pyodbc.connect(conn_str)
+        conn = pyodbc.connect(conn_str)
+        # Escudo de aislamiento para evitar interbloqueos con las agencias
+        with conn.cursor() as cursor:
+            cursor.execute("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;")
+        return conn
 
     @staticmethod
     def get_dwh_connection():
+        """Conexión al DWH Local usando Autenticación de Windows"""
         conn_str = (
             f"DRIVER={{ODBC Driver 17 for SQL Server}};"
             f"SERVER={os.getenv('DWH_SERVER')};"
             f"DATABASE={os.getenv('DWH_DATABASE')};"
-            f"UID={os.getenv('DWH_UID')};"
-            f"PWD={os.getenv('DWH_PWD')};"
+            f"Trusted_Connection=yes;"  # Usa las credenciales activas de Windows
         )
         return pyodbc.connect(conn_str)

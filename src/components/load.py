@@ -59,6 +59,8 @@ class Loader:
                 df["SaldoMora150Real"],
                 df["NumeroSociosReal"],
                 df["NumeroSociosAnterior"],
+                df["Varios"],
+                df["TEA"],
             )
         )
 

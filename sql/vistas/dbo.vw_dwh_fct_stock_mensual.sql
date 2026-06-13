@@ -1,6 +1,3 @@
-USE [TRANSACMIF];
-GO
-
 CREATE OR ALTER VIEW dbo.vw_dwh_fct_stock_mensual
 WITH ENCRYPTION 
 AS
@@ -8,7 +5,6 @@ WITH CTE_Base_Mensual AS (
     SELECT 
         T_PRE.PERIODO AS Periodo,
         T_USU.ID_USER AS CodAsesor,
-        -- Lógica de negocio exacta para la identificación y división de Agencias
         CASE
             WHEN T_ANA.ID_AGE = '98' THEN
                 CASE
@@ -34,7 +30,6 @@ WITH CTE_Base_Mensual AS (
     INNER JOIN SEGURIDAD.dbo.GRUPOUSER T_GRU 
         ON T_GRU.ID_GRUPO = T_USU.ID_GRUPO AND T_GRU.NOM_GRUPO = 'CREDITOS'
     WHERE T_PRE.SALDO_PRES > 0
-      -- Lista de exclusión permanente de carteras institucionales/castigos
       AND T_USU.ID_USER NOT IN (
           'PRECASTIGO', 'RJULI6', 'RJULIACA', 'RLIMA7', 'RQUILLA3', 'RSICUA4',
           'LHR5', 'HTEJ5', 'TKPN5', 'GHVJ5', 'OTA5', 'SDHF5', 'CMN5', 'HQND5'
@@ -52,6 +47,33 @@ CTE_Metricas_Mensuales AS (
         COUNT(DISTINCT CUENTA) AS NumeroSociosReal
     FROM CTE_Base_Mensual
     GROUP BY Periodo, CodAsesor, CodAgencia
+),
+-- 👈 NUEVA SUB-METRICA: Plazo acumulado por Asesor
+CTE_Duracion_Mensual AS (
+    SELECT 
+        T_PRE.PERIODO AS Periodo,
+        T_USU.ID_USER AS CodAsesor,
+        SUM(T_DED.CAPITAL) AS Varios
+    FROM dbo.PRESTAMO T_PTM
+    INNER JOIN dbo.PREEC T_PRE ON T_PRE.CUENTA = T_PTM.CUENTA AND T_PRE.OTORGA = T_PTM.OTORGA AND T_PRE.PAGARE = T_PTM.PAGARE
+    INNER JOIN SEGURIDAD.DBO.ANAREC T_ANA ON T_ANA.ID_ANAREC = T_PRE.ID_ANA AND T_ANA.FLAG_ANAREC = 'A'
+    INNER JOIN SEGURIDAD.dbo.USUARIOS T_USU ON T_USU.ID_USER = T_ANA.ID_USER
+    INNER JOIN dbo.PRE_DEDUCESOLI T_DED ON T_PTM.PAGARE = T_DED.NRO_SOL AND T_DED.GLOSA = 'Cursos-Capacitación'
+    WHERE T_PTM.TIPO_PROD <> '52'
+    GROUP BY T_PRE.PERIODO, T_USU.ID_USER
+),
+-- 👈 NUEVA SUB-METRICA: TEA Promedio Ponderada por Asesor
+CTE_TEA_Mensual AS (
+    SELECT 
+        T_PRE.PERIODO AS Periodo,
+        T_USU.ID_USER AS CodAsesor,
+        SUM(T_PTM.MONTO_PRESTAMO * T_PTM.TEA_INTERES) / NULLIF(SUM(T_PTM.MONTO_PRESTAMO), 0) AS TEA
+    FROM dbo.PRESTAMO T_PTM
+    INNER JOIN dbo.PREEC T_PRE ON T_PRE.CUENTA = T_PTM.CUENTA AND T_PRE.OTORGA = T_PTM.OTORGA AND T_PRE.PAGARE = T_PTM.PAGARE
+    INNER JOIN SEGURIDAD.DBO.ANAREC T_ANA ON T_ANA.ID_ANAREC = T_PRE.ID_ANA AND T_ANA.FLAG_ANAREC = 'A'
+    INNER JOIN SEGURIDAD.dbo.USUARIOS T_USU ON T_USU.ID_USER = T_ANA.ID_USER
+    WHERE T_PTM.TIPO_PROD <> '52'
+    GROUP BY T_PRE.PERIODO, T_USU.ID_USER
 )
 SELECT 
     M.Periodo,
@@ -62,7 +84,15 @@ SELECT
     M.SaldoMora31Real,
     M.SaldoMora150Real,
     M.NumeroSociosReal,
-    -- Lag histórico automático por asesor para hallar el periodo anterior sin cruces fijos
-    ISNULL(LAG(M.NumeroSociosReal) OVER (PARTITION BY M.CodAsesor ORDER BY M.Periodo), 0) AS NumeroSociosAnterior
-FROM CTE_Metricas_Mensuales M;
+    M.NumeroSociosAnterior,
+    ISNULL(D.Varios, 0.00) AS Varios, -- Campo Plazo inyectado
+    ISNULL(T.TEA, 0.0000)  AS TEA    -- Campo TEA inyectado
+FROM (
+    SELECT 
+        M.*,
+        ISNULL(LAG(M.NumeroSociosReal) OVER (PARTITION BY M.CodAsesor ORDER BY M.Periodo), 0) AS NumeroSociosAnterior
+    FROM CTE_Metricas_Mensuales M
+) M
+LEFT JOIN CTE_Duracion_Mensual D ON D.Periodo = M.Periodo AND D.CodAsesor = M.CodAsesor
+LEFT JOIN CTE_TEA_Mensual T ON T.Periodo = M.Periodo AND T.CodAsesor = M.CodAsesor;
 GO

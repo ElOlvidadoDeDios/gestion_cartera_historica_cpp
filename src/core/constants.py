@@ -9,7 +9,7 @@ WHERE Periodo = ?;
 
 QUERY_EXTRACT_STOCK = f"""
 SELECT Periodo, CodAsesor, CodAgencia, SaldoTotalReal, SaldoMora9Real, 
-       SaldoMora31Real, SaldoMora150Real, NumeroSociosReal, NumeroSociosAnterior
+       SaldoMora31Real, SaldoMora150Real, NumeroSociosReal, NumeroSociosAnterior, Varios, TEA
 FROM {DBConfig.VW_SRC_STOCK} 
 WHERE Periodo = ?;
 """
@@ -41,11 +41,12 @@ WHEN MATCHED THEN
     UPDATE SET 
         T.CodAgencia = ?, T.SaldoTotalReal = ?, T.SaldoMora9Real = ?, 
         T.SaldoMora31Real = ?, T.SaldoMora150Real = ?, 
-        T.NumeroSociosReal = ?, T.NumeroSociosAnterior = ?
+        T.NumeroSociosReal = ?, T.NumeroSociosAnterior = ?,
+        T.Varios = ?, T.TEA = ?
 WHEN NOT MATCHED THEN
     INSERT (Periodo, CodAsesor, CodAgencia, SaldoTotalReal, SaldoMora9Real, 
-            SaldoMora31Real, SaldoMora150Real, NumeroSociosReal, NumeroSociosAnterior)
-    VALUES (S.Periodo, S.CodAsesor, ?, ?, ?, ?, ?, ?, ?);
+            SaldoMora31Real, SaldoMora150Real, NumeroSociosReal, NumeroSociosAnterior, Varios, TEA)
+    VALUES (S.Periodo, S.CodAsesor, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 """
 
 QUERY_LOAD_FLOW = f"""

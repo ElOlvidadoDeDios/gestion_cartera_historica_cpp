@@ -33,6 +33,8 @@ class Transformer:
             "SaldoMora9Real",
             "SaldoMora31Real",
             "SaldoMora150Real",
+            "Varios",
+            "TEA",
         ]
         df[decimals] = df[decimals].fillna(0.00).astype(float)
         df["NumeroSociosReal"] = df["NumeroSociosReal"].fillna(0).astype(int)

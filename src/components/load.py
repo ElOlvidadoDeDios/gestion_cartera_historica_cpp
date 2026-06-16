@@ -79,21 +79,26 @@ class Loader:
             return
         logging.info(f"Actualizando {len(df)} registros en {DBConfig.TBL_DWH_FLOW}...")
 
-        # OPTIMIZACIÓN: Alta velocidad de procesamiento para el volumen transaccional diario
         params = list(
             zip(
                 df["Fecha"],
                 df["CodAsesor"],
+                # Campos para la clausula UPDATE
                 df["CodAgencia"],
                 df["SaldoCarteraReal"],
                 df["MontoColocacionReal"],
                 df["NumColocacionesReal"],
                 df["MontoRepagoReal"],
+                df["VariosReal"],
+                df["TEAPonderadaReal"],
+                # Campos para la clausula INSERT
                 df["CodAgencia"],
                 df["SaldoCarteraReal"],
                 df["MontoColocacionReal"],
                 df["NumColocacionesReal"],
                 df["MontoRepagoReal"],
+                df["VariosReal"],
+                df["TEAPonderadaReal"],
             )
         )
 
@@ -102,4 +107,6 @@ class Loader:
                 cursor.fast_executemany = True
                 cursor.executemany(QUERY_LOAD_FLOW, params)
                 conn.commit()
-        logging.info("Tabla fct_flow_diario actualizada incrementalmente sin perdidas.")
+        logging.info(
+            "Tabla fct_flow_diario actualizada incrementalmente con Plazo y TEA."
+        )

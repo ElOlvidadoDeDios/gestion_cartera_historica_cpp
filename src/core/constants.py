@@ -16,7 +16,7 @@ WHERE Periodo = ?;
 
 QUERY_EXTRACT_FLOW = f"""
 SELECT Fecha, CodAsesor, CodAgencia, SaldoCarteraReal, MontoColocacionReal, 
-       NumColocacionesReal, MontoRepagoReal
+       NumColocacionesReal, MontoRepagoReal, VariosReal, TEAPonderadaReal
 FROM {DBConfig.VW_SRC_FLOW} 
 WHERE CONVERT(CHAR(6), Fecha, 112) = ?;
 """
@@ -56,9 +56,9 @@ ON (T.Fecha = S.Fecha AND T.CodAsesor = S.CodAsesor)
 WHEN MATCHED THEN
     UPDATE SET 
         T.CodAgencia = ?, T.SaldoCarteraReal = ?, T.MontoColocacionReal = ?, 
-        T.NumColocacionesReal = ?, T.MontoRepagoReal = ?
+        T.NumColocacionesReal = ?, T.MontoRepagoReal = ?, T.VariosReal = ?, T.TEAPonderadaReal = ?
 WHEN NOT MATCHED THEN
     INSERT (Fecha, CodAsesor, CodAgencia, SaldoCarteraReal, MontoColocacionReal, 
-            NumColocacionesReal, MontoRepagoReal)
-    VALUES (S.Fecha, S.CodAsesor, ?, ?, ?, ?, ?);
+            NumColocacionesReal, MontoRepagoReal, VariosReal, TEAPonderadaReal)
+    VALUES (S.Fecha, S.CodAsesor, ?, ?, ?, ?, ?, ?, ?);
 """

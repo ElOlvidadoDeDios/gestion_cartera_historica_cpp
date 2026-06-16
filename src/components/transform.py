@@ -51,7 +51,13 @@ class Transformer:
         df["CodAsesor"] = df["CodAsesor"].astype(str).str.strip()
         df["CodAgencia"] = df["CodAgencia"].astype(str).str.strip()
 
-        money_cols = ["SaldoCarteraReal", "MontoColocacionReal", "MontoRepagoReal"]
+        money_cols = [
+            "SaldoCarteraReal",
+            "MontoColocacionReal",
+            "MontoRepagoReal",
+            "VariosReal",
+            "TEAPonderadaReal",
+        ]
         df[money_cols] = df[money_cols].fillna(0.00).astype(float)
         df["NumColocacionesReal"] = df["NumColocacionesReal"].fillna(0).astype(int)
         return df

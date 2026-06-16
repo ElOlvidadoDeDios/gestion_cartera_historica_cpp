@@ -8,7 +8,6 @@ WITH CTE_Cartera_Base AS (
     SELECT 
         T_PRE.PERIODO AS Periodo,
         T_USU.ID_USER AS CodAsesor,
-        -- Lógica de agencias integrada sin conflictos de GROUP BY
         CASE
             WHEN T_ANA.ID_AGE = '98' THEN
                 CASE
@@ -48,12 +47,15 @@ CTE_Colocaciones_Diarias AS (
         CAST(T_PTM.OTORGA AS DATE) AS Fecha,
         T_USU.ID_USER              AS CodAsesor,
         SUM(T_PTM.MONTO_PRESTAMO)  AS MontoColocacionReal,
-        COUNT(T_PTM.PAGARE)        AS NumColocacionesReal
+        COUNT(T_PTM.PAGARE)        AS NumColocacionesReal,
+        ISNULL(SUM(T_DED.CAPITAL), 0.00) AS VariosReal, 
+        ISNULL(SUM(T_PTM.MONTO_PRESTAMO * T_PTM.TEA_INTERES), 0.0000) AS TEAPonderadaReal 
     FROM dbo.PRESTAMO T_PTM
-    INNER JOIN dbo.PREEC T_PRE ON T_PRE.CUENTA = T_PTM.CUENTA AND T_PRE.OTORGA = T_PTM.OTORGA AND T_PRE.PAGARE = T_PTM.PAGARE
+    INNER JOIN dbo.PREEC T_PRE ON T_PRE.CUENTA = T_PTM.CUENTA AND T_PRE.OTORGA = T_PTM.OTORGA AND T_PRE.PAGARE = T_PTM.PAGARE AND T_PRE.PERIODO = CONVERT(CHAR(6), T_PTM.OTORGA, 112)
     INNER JOIN SEGURIDAD.DBO.ANAREC T_ANA ON T_ANA.ID_ANAREC = T_PRE.ID_ANA AND T_ANA.FLAG_ANAREC = 'A'
     INNER JOIN SEGURIDAD.dbo.USUARIOS T_USU ON T_USU.ID_USER = T_ANA.ID_USER
     INNER JOIN SEGURIDAD.dbo.GRUPOUSER T_GRU ON T_GRU.ID_GRUPO = T_USU.ID_GRUPO AND T_GRU.NOM_GRUPO = 'CREDITOS'
+    LEFT JOIN dbo.PRE_DEDUCESOLI T_DED ON T_PTM.PAGARE = T_DED.NRO_SOL AND T_DED.GLOSA = 'Cursos-Capacitación'
     WHERE T_PTM.TIPO_PROD <> '52'
       AND T_USU.ID_USER NOT IN (
           'PRECASTIGO', 'RJULI6', 'RJULIACA', 'RLIMA7', 'RQUILLA3', 'RSICUA4',
@@ -68,7 +70,8 @@ CTE_Repagos_Diarios AS (
         SUM(T_MOV.CAPITAL)            AS MontoRepagoReal
     FROM dbo.PREMOV T_MOV
     INNER JOIN dbo.PRESTAMO T_PTM ON T_PTM.CUENTA = T_MOV.CUENTA AND T_PTM.OTORGA = T_MOV.OTORGA AND T_PTM.PAGARE = T_MOV.PAGARE
-    INNER JOIN dbo.PREEC T_PRE ON T_PRE.CUENTA = T_MOV.CUENTA AND T_PRE.OTORGA = T_MOV.OTORGA AND T_PRE.PAGARE = T_MOV.PAGARE
+    INNER JOIN dbo.PREEC T_PRE ON T_PRE.CUENTA = T_MOV.CUENTA AND T_PRE.OTORGA = T_MOV.OTORGA AND T_PRE.PAGARE = T_MOV.PAGARE 
+        AND T_PRE.PERIODO = CONVERT(CHAR(6), T_MOV.FECHA_MOV, 112) -- 🔥 EL BLINDAJE CRÍTICO AQUÍ
     INNER JOIN SEGURIDAD.DBO.ANAREC T_ANA ON T_ANA.ID_ANAREC = T_PRE.ID_ANA AND T_ANA.FLAG_ANAREC = 'A'
     INNER JOIN SEGURIDAD.dbo.USUARIOS T_USU ON T_USU.ID_USER = T_ANA.ID_USER
     INNER JOIN SEGURIDAD.dbo.GRUPOUSER T_GRU ON T_GRU.ID_GRUPO = T_USU.ID_GRUPO AND T_GRU.NOM_GRUPO = 'CREDITOS'
@@ -91,11 +94,12 @@ SELECT
     ISNULL(H.SaldoCarteraReal, 0.00)    AS SaldoCarteraReal,
     ISNULL(C.MontoColocacionReal, 0.00) AS MontoColocacionReal,
     ISNULL(C.NumColocacionesReal, 0)    AS NumColocacionesReal,
-    ISNULL(R.MontoRepagoReal, 0.00)     AS MontoRepagoReal
+    ISNULL(R.MontoRepagoReal, 0.00)     AS MontoRepagoReal,
+    ISNULL(C.VariosReal, 0.00)          AS VariosReal,
+    ISNULL(C.TEAPonderadaReal, 0.0000)  AS TEAPonderadaReal
 FROM CTE_Universo_Flow U
 LEFT JOIN CTE_Colocaciones_Diarias C ON C.Fecha = U.Fecha AND C.CodAsesor = U.CodAsesor
 LEFT JOIN CTE_Repagos_Diarios R ON R.Fecha = U.Fecha AND R.CodAsesor = U.CodAsesor
--- Cruce por periodo dinámico AAAAMM para heredar saldo de cartera viva y códigos de agencia oficiales
 LEFT JOIN CTE_Cartera_Historica H ON H.CodAsesor = U.CodAsesor AND H.Periodo = CONVERT(CHAR(6), U.Fecha, 112)
-WHERE H.CodAgencia IS NOT NULL; -- Excluye transacciones huerfanas de usuarios fuera del padrón oficial
+WHERE H.CodAgencia IS NOT NULL;
 GO

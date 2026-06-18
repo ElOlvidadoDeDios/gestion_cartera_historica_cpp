@@ -41,7 +41,7 @@ SELECT
 
 	--- Saldo capital en Mora CPP
 	CASE
-		WHEN T_PRE.DIAS_REALES >= 9 THEN T_PRE.SALDO_PRES
+		WHEN T_PRE.DIAS_REALES >= 4 THEN T_PRE.SALDO_PRES
 		ELSE 0
 	END AS Mora9_SaldoCapital,
 
@@ -71,7 +71,7 @@ FROM
 ------------
 WHERE
 ------------
---poner periodo anterior
+
 	T_PRE.PERIODO = '202606'
 )
 

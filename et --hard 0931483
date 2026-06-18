@@ -1,0 +1,190 @@
+[33m6b1a567[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Errores
+[33m5986432[m Implementación de orquestador 'all' y borrado selectivo 202606
+[33m86b1c5c[m Implementación de carga incremental para carteras 202606
+[33m22e8cfe[m Implementación de cartera agencia y asesor
+[33m0931483[m Implementación de vistas de cartera para agencias y asesores
+[33m7a31e53[m fix(dim_asesor.sql): excluir usuario referido a creditos pre castigados
+[33m40a4c7d[m fix(dim_asesor.sql): excluir recuperador 'HQND5'
+[33mcd9b4a2[m style(path project): actualizar ruta de este proyecto especifico
+[33me3bc153[m chore-fix(ranking asesor): mantener la definicion del pipeline "pipeline_operational_ranking_asesor" porque es llamado en el main.py
+[33mf72dd3d[m chore(ranking asesor): actualizar solo a primera hora junto con los demas reportes operativos
+[33m0f71e06[m chore(202603): establecer estaticamente periodo en consultas t-sql
+[33m8635e62[m feat(ranking_asesor 202602): aniadir opcion de argumento en main.py
+[33m00acf70[m feat(ranking_asesor 202602): pipeline
+[33m6f642f9[m feat(ranking_asesor 202602): constants.py
+[33m9359c48[m feat(ranking_asesor): T-SQL query para el 202602
+[33m4f948a9[m fix(asesores vigentes): no es correcto excluir asesores vigentes via saldo positivo en el repago.sql, porque sino excluirá creditos.
+[33mc2c6284[m fix(asesores vigentes): excluir asesores retirados
+[33me0805b5[m fix(asesores vigentes): excluir repagos de asesores retirados
+[33ma993f47[m feat(programa dile acompania): creacion de campo "Participante"
+[33mbfce463[m feat(programa dile acompania): lista de participantes
+[33m84d414d[m fix(dim asesor): excluir recuperadores de creditos en perdida
+[33m3b2bd1c[m fix(t-sql dim_asesor): excluir recuperados de tramos de mora superiores al de un recuperador de agencia
+[33m245aa55[m fix(avance cartera): renombrar campos
+[33m0fb5a08[m fix(creditos cancelados no renovados): acortar numero de cuenta
+[33m30736c8[m fix(avance cartera): en T-SQL query, crear columna avance con tipo decimal
+[33m9753798[m feat(avance de cartera): main
+[33m7eeccb2[m feat(avance de cartera): pipeline
+[33m145aa58[m feat(avance de cartera): T-SQL query
+[33me4c0cdf[m feat(avance de cartera): table
+[33m89246bb[m feat(avance de cartera): constants
+[33m3e8b533[m feat(numero de socios): integrar vista sobre socios en fct_stock.sql
+[33mba4da02[m feat(numero de socios): t-sql query
+[33m243bd38[m feat(dim_agencia): aniadir identificador de agencia magisterio
+[33ma658293[m style
+[33m677425b[m feat(tvf): numero de socios segun periodo
+[33m7290852[m feat(tvf): fct_stock segun periodo
+[33m33c919b[m feat(store procedure): sp_fct_stock_flow segun periodo
+[33md9cbaae[m feat(ultimos 6 meses): ampliar periodo de cancelacion a 6 meses
+[33m72840eb[m feat(tea): aniadir indicador tea en fct_stock
+[33m26eafbc[m feat(tea): aniadir tea ponderada por desembolso
+[33m2d35396[m fix(dim_asesor.sql): excepciones de cartera de recuperacion
+[33mf775405[m style(colocacion.sql)
+[33m2214fba[m refactor(cartera_moras.sql): quitar cartera y moras pasadas
+[33m4de374e[m oper(202512): pipeline
+[33m1c7faa7[m fix(dias laborados): obtener los dias laborados de acuerdo a los dias que se realizaron repagos y no desembolsos
+[33mf506814[m fix(ranking_asesor): restar S/100,000 de crecimiento a Maziel
+[33maeccb2d[m feat(carteras y moras anteriores): T-SQL fct_stock
+[33me932693[m feat(carteras y moras anteriores): view
+[33mdd74bf0[m feat(mora150): stock T-SQL
+[33m0bee182[m feat(mora150): T-SQL
+[33m841a511[m feat(ranking asesores): pipeline
+[33m8b60ce0[m feat(ranking asesores): constants
+[33maafd2ca[m feat(ranking asesores): table yaml
+[33mbf1f63e[m feat(ranking asesores): sql
+[33mf4d48d0[m style(view-dim_asesor.sql)
+[33m1e2861d[m fix(nueva ruta del proyecto): lock debido a instalar nuevamente el proyecto como editable
+[33m681b2aa[m fix(nueva ruta del proyecto): constants
+[33m844ba49[m feat(creditos cancelados no renovados): pipeline
+[33maeb0196[m feat(creditos cancelados no renovados): T-SQL
+[33mbaa1572[m feat(creditos cancelados no renovados): T-SQL view
+[33mb7fb04b[m feat(creditos cancelados no renovados): constants
+[33m83b034d[m feat(creditos cancelados no renovados): archivo de configuracion - tabla
+[33m35d2c55[m fix(sql strategic): extraccion no del campo 'Duracion' sino de 'Varios'
+[33m0d4fe95[m fix(sql strategic views duracion): extraccion no del campo 'Duracion' sino de 'Varios'
+[33me8c00d8[m docs(asesores retirados): condicion de exclusion de asesores retirados
+[33m3e19f4b[m fix(ruta: variables de entorno): cargar variables de entorno en el script correcto
+[33m38df15d[m fix(ruta: variables de entorno): establecer ruta absoluta a variables de entorno
+[33m82c2b1b[m fix(ruta config): establecer ruta absoluta a archivo de configuracion
+[33m170a960[m fix(creditos cancelados): aniadir logica de creditos cancelados en pipeline variacional
+[33mb5025b7[m feat(creditos cancelados): crear pipeline
+[33me0f9369[m feat(creditos cancelados): aniadir configuracion: nombre de tabla en SQL Server
+[33mf57205d[m refactor(constants): aplicar constantes de T-SQL consultas restructuradas en un diccionario
+[33m360c1a4[m refactor(constants): estructurar constantes de T-SQL consultas en un diccionario
+[33m9430fb1[m feat(creditos cancelados): consulta
+[33m4cc1354[m feat(creditos cancelados): view
+[33m5dcd201[m style(sql): restructurar carpetas a 'strategic' y 'operational'
+[33me2d29f2[m feat(dim_calendario): query sobre dimension calendario mensual (at_date)
+[33m72c4700[m feat(dim_calendario): query sobre dimension calendario diario (on_date)
+[33m3c16d18[m feat(main): pasar argumentos por consola para indicar tipo de pipeline
+[33mef4591b[m feat(pipeline): aniadir pipeline initial y variational
+[33m4f506be[m fix(variational): corregir parametrizacion de tabla
+[33m2259ad9[m fix(pipeline): cambiar temporalidad de actualizacion de fecha a periodo
+[33m0dd7f55[m fix(load component): cambiar temporalidad de actualizacion de fecha a periodo
+[33ma7debe6[m fix(sql): cambiar temporalidad de actualizacion de fecha a periodo
+[33m3bc6c57[m feat(variational-variables de stock): pipeline
+[33m47aac45[m feat(variational-variables de stock): load
+[33m6161a7f[m fix: actualizar periodos de vistas
+[33m32f5a63[m style(views): codear en una sola linea lo referido a creacion o alteracion de vista
+[33m5796ebf[m refactor: establecer temporalidad 'Periodo' en lugar de 'Fecha' en variables stock
+[33m4c79b7d[m style(pipelines): renombrar tablas y pipelines
+[33m88fa0a1[m fix: reorganizar en lugar de folderes 'strategic' y 'operational'
+[33mc8ce253[m fix(dim_asesor): excluir asesores sin cartera
+[33m4de744b[m fix(dim_asesor): quitar metodo innecesario '_quitar_asesores_atipicos' en su transformador dado que esta limpieza se hace en la consulta T-SQL respectiva
+[33m9c5ae37[m fix(dim_asesor): excepcion de nombre en la creacion de alias 'asesor'
+[33md75c92d[m feat(duracion): pipeline
+[33m6b9534a[m feat(duracion): constant
+[33m9cc897e[m feat(duracion): consulta T-SQL
+[33mc79b350[m feat(duracion): vista
+[33m47a2cba[m refactor(cartera_moras): crear vista en SQL Server de las variables cartera y moras
+[33mca66ecf[m feat(colocacion): ejecutar en main.py
+[33m2cb49a4[m feat(fct_flow): pipeline
+[33m309ec2b[m feat(fct_flow): transformador
+[33m21c0049[m feat(fct_flow): establecer ruta como constante
+[33mb3cf911[m feat(fct_flow): consulta T-SQL
+[33m9e06816[m fix(colocacion): ajustar extraccion del periodo actual
+[33m28bdb98[m style(dim_asesor): creando vista de SQL Server y respectiva consulta T-SQL
+[33m7a1bde5[m refactor(views): crear vistas de variables flow en lugar de consultas T-SQL que usan CTEc
+[33m998f410[m feat(colocacion): pipeline
+[33m40f4a8f[m style(table): renombrar atributo de 'tables' a 'table' en la clase ConfigManager
+[33m3ab66bb[m feat(colocacion): establecer ruta a consulta sql como constante
+[33mb805238[m feat(colocacion): sql
+[33m5ca230e[m style(table): renombrar clave de configuracion de 'tables' a 'table'
+[33m2e25472[m style: quitar carpeta sobre 'operational'
+[33m2d26ccc[m fix: quitar archivos innecesarios sobre la dimension asesor
+[33mdcf2826[m feat(main): transformacion de la dimension asesor
+[33m05c4988[m feat(pipeline): aniadir pipeline sobre transformacion de la dimension asesor
+[33mb404bd6[m feat(components): aniadir clase Transformer
+[33m66db053[m feat(constants): aniadir ruta de consulta T-SQL sobre la dimension asesor
+[33mc7ec292[m feat(main): llamar pipeline de variables de stock 'cartera' y 'moras'
+[33mf67fc61[m feat(pipeline): definir pipeline sobre variables de stock 'cartera' y 'moras'
+[33mf43a62c[m feat: usar componente de carga
+[33mbd71ec0[m feat: crear componente de carga
+[33m0208ac1[m feat: usar componente de extracción
+[33m84ba7d9[m feat: aniadir componente de extraccion
+[33m322b2ff[m refactor: aniadir carpeta 'components'
+[33m56ac57d[m style(DatabaseConnection): renombrar método de obtención del 'engine'
+[33mb33fb70[m fix(vars_stock): utilizar metodo 'engine' de la clase DatabaseConnection
+[33mb40dd64[m fix(utils): cambiar metodo de instancia 'engine' a metodo de clase
+[33maeb515f[m fix(vars_stock): aniadir constantes de consultas sql sobre cartera y moras
+[33mc5712b1[m feat(constants): consulta sql sobre cartera y moras
+[33md83ec88[m fix: quitar funciones innecesarias
+[33m1fa9e41[m fix(var_stock): aniadir configuraciones de tablas
+[33m0e7555f[m feat(config.py): gestor de configuraciones en Python
+[33m6fa16ae[m chore(constants): aniadir ruta a las tablas como configuraciones
+[33md77090d[m feat(utils): lector de archivos YAML
+[33m4761fbe[m chore: aniadir configuraciones de tablas sql server
+[33me24be45[m chore: instalar 'python-box' y 'ensure'
+[33m7affb2e[m style: reestructurar carpetas y archivos referidas a las variables de flujo
+[33m0d2a062[m style: reestructurar carpetas y archivos referidos a las variables de stock
+[33mb2831d4[m docs(documentation): mora
+[33mc55376d[m docs(documentation): cartera
+[33mfa21787[m docs(changelog): datamart estrategico
+[33m6fb2be5[m feat(src): cartera y moras
+[33m11f09d2[m feat(sql): cartera y mora
+[33mde6904d[m feat(utils): aniadir funcion que carga configuraciones en scripts python
+[33m43540a2[m chore(config): aniadir configuraciones
+[33me584dd2[m chore(lock): aniadir libreria pyyaml
+[33madd7999[m docs(documentation): nombrar tabla sobre mora
+[33m05bb640[m docs(changelog): nombres de las tablas del datamart estrategico
+[33md7ee1cd[m docs(documentation): nombres de las tablas del datamart estrategico
+[33m2995118[m feat(python): dimension asesor
+[33mc0205eb[m feat(sql): dimension asesor
+[33mcbebab7[m docs(changelog): dimension asesor del datamart estrategico
+[33mb9faa7a[m docs(documentation): dimension asesor
+[33maf821dc[m docs(documentation)[wip]: mapa de tablas y de variables en el datamart operativo
+[33m7a533ed[m docs(documentation): mapa de tablas y variables en el datamart estragico
+[33m51e2cd5[m docs(documentation): mapa de datamarts
+[33mcb75e37[m feat(src): cartera y moras
+[33m97afa60[m feat(sql): cartera y moras
+[33m64d5a6d[m feat: aniadir constantes
+[33mb569f35[m chore(core): reubicar utilidades
+[33mf38a66b[m chore(core): crear carpeta core
+[33md1fe3db[m feat(utils): aniadir clase sobre obtencion de engine de conexion a base de datos
+[33m78d876a[m docs(changelog): repago
+[33m1eeeb36[m docs(documentation): repago
+[33m56403c3[m docs(changelog): colocacion
+[33m89336f2[m docs(documentation): colocacion
+[33mad066de[m chore: estructura completa de carpetas y archivos en src respecto a tablas de hechos
+[33m87a7b41[m docs(changelog): mora
+[33m586fa8a[m docs: mora
+[33md6bd7da[m chore: reestructurar carpetas y archivos de acuerdo al mapa de datamarts, tablas y variables
+[33m8993091[m docs: aniadir documentacion sobre datamarts, tablas y variables
+[33m4a43abb[m docs: mapa de las variables colocacion y repago
+[33m104ca56[m chore: estructura inicial de carpetas y archivos referido a las variables de hechos
+[33m0cdea36[m chore: aniadir mapa de variables
+[33m32b3196[m chore(fct): estructura de carpetas y archivos para tablas de hechos
+[33m130f5b0[m chore: estructura de carpetas y archivos inicial
+[33m81b66d0[m feat(wip): extraccion
+[33m4902055[m chore: remover libreria zenml
+[33m4d38c2e[m chore: ignorar logs del framework Hydra
+[33mea0479b[m feat: extract
+[33m2067efb[m chore: estructura de carpetas y archivos
+[33m61ef9d3[m chore: instalacion python==3.12.10
+[33mf1dec1c[m feat: dim_asesor
+[33m43e3a7e[m chora: instalar librerias python
+[33maceb060[m refactor: quitar folderes no necesarios
+[33m0d4a349[m chora: aniadir librerias python
+[33m2a1e3b0[m chora: poetry.lock inicial
+[33maa58bd4[m chore: pyproject.toml
+[33m889b0ed[m chore: estructura inicial de carpetas y archivos

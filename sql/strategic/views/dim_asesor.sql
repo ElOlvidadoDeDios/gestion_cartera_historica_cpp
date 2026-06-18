@@ -30,28 +30,30 @@ SELECT
 --- Periodo
 	T_PRE.PERIODO AS Periodo,
 
---- ID Agencia
+--- ID Agencia Estratégica con soporte para 13 agencias
+CASE
+    --- Segmentar agencias digitales (Base SICOOP 98) de 1 y 2 dígitos
+    WHEN T_ANA.ID_AGE = '98' THEN
+        CASE
+            WHEN RTRIM(T_ANA.ID_USER) LIKE '%10' THEN '10' -- Lima San Juan de Lurigancho
+            WHEN RTRIM(T_ANA.ID_USER) LIKE '%11' THEN '11' -- Chiclayo
+            WHEN RTRIM(T_ANA.ID_USER) LIKE '%12' THEN '12' -- Arequipa
+            WHEN RTRIM(T_ANA.ID_USER) LIKE '%13' THEN '13' -- Pucallpa
+            WHEN RTRIM(T_ANA.ID_USER) LIKE '%6'  THEN '06' -- Juliaca
+            WHEN RTRIM(T_ANA.ID_USER) LIKE '%7'  THEN '07' -- Lima Los Olivos
+            ELSE '98'
+        END
 
-	CASE
+    --- Segmentar sucursales de Wanchaq (01) y Magisterio (09)
+    WHEN T_ANA.ID_AGE = '01' THEN
+        CASE
+            WHEN RTRIM(T_ANA.ID_USER) LIKE '%9' THEN '09'
+            ELSE '01'
+        END
 
-	--- Distinguir agencia digital en agencia juliaca y agencia lima
-		WHEN T_ANA.ID_AGE = '98' THEN
-			CASE
-				WHEN RIGHT(RTRIM(T_ANA.ID_USER), 1) = '6' THEN '06'
-				WHEN RIGHT(RTRIM(T_ANA.ID_USER), 1) = '7' THEN '07'
-			END
-
-	--- Distinguir agencia wanchaq en agencia wanchaq y agencia magisterio
-		WHEN T_ANA.ID_AGE = '01' THEN
-			CASE
-				WHEN RIGHT(RTRIM(T_ANA.ID_USER), 1) <> '9' THEN '01'
-				WHEN RIGHT(RTRIM(T_ANA.ID_USER), 1) = '9' THEN '09'
-			END
-
-	--- Mantener mismo IdSAgencia para el resto de agencias
-		ELSE T_ANA.ID_AGE
-
-	END AS IdSAgencia,
+    --- Preservar ID nativo para el resto de agencias comerciales fijas
+    ELSE T_ANA.ID_AGE
+END AS IdSAgencia,
 
 --- ID asesor
 	T_ANA.ID_USER AS IdSAsesor,

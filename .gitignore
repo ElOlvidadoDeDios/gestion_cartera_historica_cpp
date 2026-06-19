@@ -11,3 +11,4 @@ backup/
 *.csv
 *.xlsx
 *.bak
+ejecucion.log

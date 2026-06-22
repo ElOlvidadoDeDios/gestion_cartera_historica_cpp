@@ -41,7 +41,8 @@ CTE_Metricas_Mensuales AS (
         CodAsesor,
         CodAgencia,
         SUM(SALDO_PRES) AS SaldoTotalReal,
-        SUM(CASE WHEN DIAS_REALES >= 9  THEN SALDO_PRES ELSE 0 END) AS SaldoMora9Real,
+        --SUM(CASE WHEN DIAS_REALES >= 9  THEN SALDO_PRES ELSE 0 END) AS SaldoMora9Real,
+        SUM(CASE WHEN DIAS_REALES >= 4  THEN SALDO_PRES ELSE 0 END) AS SaldoMora9Real,
         SUM(CASE WHEN DIAS_REALES >= 31 THEN SALDO_PRES ELSE 0 END) AS SaldoMora31Real,
         SUM(CASE WHEN DIAS_REALES >= 151 THEN SALDO_PRES ELSE 0 END) AS SaldoMora150Real,
         COUNT(DISTINCT CUENTA) AS NumeroSociosReal

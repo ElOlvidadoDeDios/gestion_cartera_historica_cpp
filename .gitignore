@@ -11,3 +11,4 @@ ENV/
 # Archivos de configuración locales de editores
 .vscode/
 .idea/
+ejecucion.log

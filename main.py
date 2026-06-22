@@ -1,5 +1,41 @@
 import logging
 import warnings
+
+import os
+import atexit
+import logging
+import warnings
+
+# Silenciar las advertencias estéticas de Pandas en el log
+warnings.filterwarnings("ignore", category=UserWarning, module="pandas")
+
+# 🔥 SOLUCIÓN CRÍTICA: Calcular la ruta absoluta automática del proyecto
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+LOG_FILE = os.path.join(BASE_DIR, "ejecucion.log")
+
+MAX_REGISTROS = 100
+
+# Configurar el sistema de rastro (consola + archivo ejecucion.log absoluto)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[logging.FileHandler(LOG_FILE, encoding="utf-8"), logging.StreamHandler()],
+)
+
+
+# Algoritmo de limpieza de registros históricos (usa la ruta absoluta)
+def purgar_logs_antiguos():
+    if os.path.exists(LOG_FILE):
+        with open(LOG_FILE, "r", encoding="utf-8") as f:
+            lineas = f.readlines()
+
+        if len(lineas) > MAX_REGISTROS:
+            with open(LOG_FILE, "w", encoding="utf-8") as f:
+                f.writelines(lineas[-MAX_REGISTROS:])
+
+
+atexit.register(purgar_logs_antiguos)
+
 from src.components.extract import Extractor
 from src.components.transform import Transformer
 from src.components.load import Loader

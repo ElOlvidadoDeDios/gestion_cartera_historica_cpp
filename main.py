@@ -16,7 +16,7 @@ warnings.filterwarnings("ignore", category=UserWarning, module="pandas")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_FILE = os.path.join(BASE_DIR, "ejecucion.log")
 
-MAX_REGISTROS = 10
+MAX_REGISTROS = 100
 
 # Configurar el sistema de rastro (consola + archivo ejecucion.log absoluto)
 logging.basicConfig(

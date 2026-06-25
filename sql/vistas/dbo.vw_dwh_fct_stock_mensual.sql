@@ -1,3 +1,6 @@
+USE [TRANSACMIF];
+GO
+
 CREATE OR ALTER VIEW dbo.vw_dwh_fct_stock_mensual
 WITH ENCRYPTION 
 AS
@@ -6,16 +9,21 @@ WITH CTE_Base_Mensual AS (
         T_PRE.PERIODO AS Periodo,
         T_USU.ID_USER AS CodAsesor,
         CASE
+            --- 🔥 SOLUCIÓN: Segmentación blindada con LIKE para agencias de 1 y 2 dígitos
             WHEN T_ANA.ID_AGE = '98' THEN
                 CASE
-                    WHEN RIGHT(RTRIM(T_ANA.ID_USER), 1) = '6' THEN '06'
-                    WHEN RIGHT(RTRIM(T_ANA.ID_USER), 1) = '7' THEN '07'
+                    WHEN RTRIM(T_ANA.ID_USER) LIKE '%10' THEN '10' -- Lima San Juan de Lurigancho
+                    WHEN RTRIM(T_ANA.ID_USER) LIKE '%11' THEN '11' -- Chiclayo
+                    WHEN RTRIM(T_ANA.ID_USER) LIKE '%12' THEN '12' -- Arequipa
+                    WHEN RTRIM(T_ANA.ID_USER) LIKE '%13' THEN '13' -- Pucallpa
+                    WHEN RTRIM(T_ANA.ID_USER) LIKE '%6'  THEN '06' -- Juliaca
+                    WHEN RTRIM(T_ANA.ID_USER) LIKE '%7'  THEN '07' -- Lima Los Olivos
                     ELSE NULL
                 END
             WHEN T_ANA.ID_AGE = '01' THEN
                 CASE
-                    WHEN RIGHT(RTRIM(T_ANA.ID_USER), 1) <> '9' THEN '01'
-                    WHEN RIGHT(RTRIM(T_ANA.ID_USER), 1) = '9' THEN '09'
+                    WHEN RTRIM(T_ANA.ID_USER) LIKE '%9' THEN '09' -- Magisterio
+                    ELSE '01' -- Wanchaq
                 END
             ELSE T_ANA.ID_AGE
         END AS CodAgencia,
@@ -41,15 +49,14 @@ CTE_Metricas_Mensuales AS (
         CodAsesor,
         CodAgencia,
         SUM(SALDO_PRES) AS SaldoTotalReal,
-        --SUM(CASE WHEN DIAS_REALES >= 9  THEN SALDO_PRES ELSE 0 END) AS SaldoMora9Real,
-        SUM(CASE WHEN DIAS_REALES >= 4  THEN SALDO_PRES ELSE 0 END) AS SaldoMora9Real,
+        SUM(CASE WHEN DIAS_REALES >= 4 THEN SALDO_PRES ELSE 0 END) AS SaldoMora9Real, -- Tu regla actual de días >= 4
         SUM(CASE WHEN DIAS_REALES >= 31 THEN SALDO_PRES ELSE 0 END) AS SaldoMora31Real,
         SUM(CASE WHEN DIAS_REALES >= 151 THEN SALDO_PRES ELSE 0 END) AS SaldoMora150Real,
         COUNT(DISTINCT CUENTA) AS NumeroSociosReal
     FROM CTE_Base_Mensual
     GROUP BY Periodo, CodAsesor, CodAgencia
 ),
--- 👈 NUEVA SUB-METRICA: Plazo acumulado por Asesor
+-- 👈 TU SUB-METRICA: Plazo acumulado por Asesor (Preservada)
 CTE_Duracion_Mensual AS (
     SELECT 
         T_PRE.PERIODO AS Periodo,
@@ -63,7 +70,7 @@ CTE_Duracion_Mensual AS (
     WHERE T_PTM.TIPO_PROD <> '52'
     GROUP BY T_PRE.PERIODO, T_USU.ID_USER
 ),
--- 👈 NUEVA SUB-METRICA: TEA Promedio Ponderada por Asesor
+-- 👈 TU SUB-METRICA: TEA Promedio Ponderada por Asesor (Preservada)
 CTE_TEA_Mensual AS (
     SELECT 
         T_PRE.PERIODO AS Periodo,
@@ -86,8 +93,8 @@ SELECT
     M.SaldoMora150Real,
     M.NumeroSociosReal,
     M.NumeroSociosAnterior,
-    ISNULL(D.Varios, 0.00) AS Varios, -- Campo Plazo inyectado
-    ISNULL(T.TEA, 0.0000)  AS TEA    -- Campo TEA inyectado
+    ISNULL(D.Varios, 0.00) AS Varios, 
+    ISNULL(T.TEA, 0.0000)  AS TEA    
 FROM (
     SELECT 
         M.*,

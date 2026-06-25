@@ -9,15 +9,21 @@ WITH CTE_Cartera_Base AS (
         T_PRE.PERIODO AS Periodo,
         T_USU.ID_USER AS CodAsesor,
         CASE
+            --- 🔥 SOLUCIÓN: Homologación con LIKE para evitar la pérdida de flujos transaccionales
             WHEN T_ANA.ID_AGE = '98' THEN
                 CASE
-                    WHEN RIGHT(RTRIM(T_ANA.ID_USER), 1) = '6' THEN '06'
-                    WHEN RIGHT(RTRIM(T_ANA.ID_USER), 1) = '7' THEN '07'
+                    WHEN RTRIM(T_ANA.ID_USER) LIKE '%10' THEN '10' -- Lima SJL
+                    WHEN RTRIM(T_ANA.ID_USER) LIKE '%11' THEN '11' -- Chiclayo
+                    WHEN RTRIM(T_ANA.ID_USER) LIKE '%12' THEN '12' -- Arequipa
+                    WHEN RTRIM(T_ANA.ID_USER) LIKE '%13' THEN '13' -- Pucallpa
+                    WHEN RTRIM(T_ANA.ID_USER) LIKE '%6'  THEN '06' -- Juliaca
+                    WHEN RTRIM(T_ANA.ID_USER) LIKE '%7'  THEN '07' -- Lima Los Olivos
+                    ELSE NULL
                 END
             WHEN T_ANA.ID_AGE = '01' THEN
                 CASE
-                    WHEN RIGHT(RTRIM(T_ANA.ID_USER), 1) <> '9' THEN '01'
-                    WHEN RIGHT(RTRIM(T_ANA.ID_USER), 1) = '9' THEN '09'
+                    WHEN RTRIM(T_ANA.ID_USER) LIKE '%9' THEN '09' -- Magisterio
+                    ELSE '01' -- Wanchaq
                 END
             ELSE T_ANA.ID_AGE
         END AS CodAgencia,
@@ -68,7 +74,7 @@ CTE_Repagos_Diarios AS (
         T_USU.ID_USER                 AS CodAsesor,
         SUM(T_MOV.CAPITAL)            AS MontoRepagoReal
     FROM dbo.PREMOV T_MOV
-    INNER JOIN dbo.PRESTAMO T_PTM ON T_PTM.CUENTA = T_MOV.CUENTA AND T_PTM.OTORGA = T_MOV.OTORGA AND T_PTM.PAGARE = T_MOV.PAGARE
+    INNER JOIN dbo.PRESTAMO T_PTM ON T_PTM.CUENTA = T_MOV.CUENTA AND T_PTM.OTORGA = T_MOV.OTORGA AND T_PTM.PAGARE = T_PTM.PAGARE
     INNER JOIN dbo.PREEC T_PRE ON T_PRE.CUENTA = T_MOV.CUENTA AND T_PRE.OTORGA = T_MOV.OTORGA AND T_PRE.PAGARE = T_MOV.PAGARE AND T_PRE.PERIODO = CONVERT(CHAR(6), T_MOV.FECHA_MOV, 112)
     INNER JOIN SEGURIDAD.DBO.ANAREC T_ANA ON T_ANA.ID_ANAREC = T_PRE.ID_ANA AND T_ANA.FLAG_ANAREC = 'A'
     INNER JOIN SEGURIDAD.dbo.USUARIOS T_USU ON T_USU.ID_USER = T_ANA.ID_USER
@@ -95,7 +101,7 @@ CTE_Repagos_Diarios AS (
 CTE_Universo_Flow AS (
     SELECT Fecha, CodAsesor FROM CTE_Colocaciones_Diarias
     UNION
-    SELECT Fecha, CodAsesor FROM CTE_Repagos_Diarios -- 👈 Corregido aquí
+    SELECT Fecha, CodAsesor FROM CTE_Repagos_Diarios
 )
 SELECT 
     U.Fecha,

@@ -9,7 +9,7 @@ WITH CTE_Cartera_Base AS (
         T_PRE.PERIODO AS Periodo,
         T_USU.ID_USER AS CodAsesor,
         CASE
-            --- 🔥 SOLUCIÓN: Homologación con LIKE para evitar la pérdida de flujos transaccionales
+            --- Homologación con LIKE para evitar la pérdida de flujos transaccionales
             WHEN T_ANA.ID_AGE = '98' THEN
                 CASE
                     WHEN RTRIM(T_ANA.ID_USER) LIKE '%10' THEN '10' -- Lima SJL
@@ -53,14 +53,20 @@ CTE_Colocaciones_Diarias AS (
         T_USU.ID_USER              AS CodAsesor,
         SUM(T_PTM.MONTO_PRESTAMO)  AS MontoColocacionReal,
         COUNT(T_PTM.PAGARE)        AS NumColocacionesReal,
-        ISNULL(SUM(T_DED.CAPITAL), 0.00) AS VariosReal, 
+        
+        -- 🔥 SOLUCIÓN APLICADA: Se neutraliza la suma de deducibles (capacitaciones) 
+        -- para que refleje la colocación comercial pura, igualando a dm_productividad.
+        0.00 AS VariosReal, 
+        
         ISNULL(SUM(T_PTM.MONTO_PRESTAMO * T_PTM.TEA_INTERES), 0.0000) AS TEAPonderadaReal 
     FROM dbo.PRESTAMO T_PTM
     INNER JOIN dbo.PREEC T_PRE ON T_PRE.CUENTA = T_PTM.CUENTA AND T_PRE.OTORGA = T_PTM.OTORGA AND T_PRE.PAGARE = T_PTM.PAGARE AND T_PRE.PERIODO = CONVERT(CHAR(6), T_PTM.OTORGA, 112)
     INNER JOIN SEGURIDAD.DBO.ANAREC T_ANA ON T_ANA.ID_ANAREC = T_PRE.ID_ANA AND T_ANA.FLAG_ANAREC = 'A'
     INNER JOIN SEGURIDAD.dbo.USUARIOS T_USU ON T_USU.ID_USER = T_ANA.ID_USER
     INNER JOIN SEGURIDAD.dbo.GRUPOUSER T_GRU ON T_GRU.ID_GRUPO = T_USU.ID_GRUPO AND T_GRU.NOM_GRUPO = 'CREDITOS'
-    LEFT JOIN dbo.PRE_DEDUCESOLI T_DED ON T_PTM.PAGARE = T_DED.NRO_SOL AND T_DED.GLOSA = 'Cursos-Capacitación'
+    
+    -- 🔥 OPTIMIZACIÓN: Se eliminó el LEFT JOIN a dbo.PRE_DEDUCESOLI ya que no aporta a la colocación comercial
+    
     WHERE T_PTM.TIPO_PROD <> '52'
       AND T_USU.ID_USER NOT IN (
           'PRECASTIGO', 'RJULI6', 'RJULIACA', 'RLIMA7', 'RQUILLA3', 'RSICUA4',

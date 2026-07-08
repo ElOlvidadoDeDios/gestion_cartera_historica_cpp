@@ -36,7 +36,7 @@ FROM
         ON  T_PRE.CUENTA = T_PTM.CUENTA
         AND T_PRE.OTORGA = T_PTM.OTORGA
         AND T_PRE.PAGARE = T_PTM.PAGARE
-        AND T_PRE.PERIODO = '202606'
+        AND T_PRE.PERIODO = '202607'
     INNER JOIN SEGURIDAD.dbo.ANAREC T_ANA
         ON  T_ANA.ID_ANAREC = T_PRE.ID_ANA
         AND T_ANA.FLAG_ANAREC = 'A'
@@ -49,7 +49,7 @@ FROM
 WHERE
 ------
 	T_PTM.TIPO_PROD <> '52' -- Producto "Castigado"
-    AND FORMAT(T_PTM.OTORGA, 'yyyyMM') = '202606'
+    AND FORMAT(T_PTM.OTORGA, 'yyyyMM') = '202607'
 --------
 GROUP BY
 --------

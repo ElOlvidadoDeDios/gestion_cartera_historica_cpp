@@ -45,7 +45,7 @@ SELECT
 	(CASE 
 		WHEN T.IdSAsesor = 'VCVM' 
 		--THEN (SUM(T.ColocacionMontoReal) - SUM(T.RepagoReal)) - 100000
-		THEN (SUM(T.ColocacionMontoReal) - SUM(T.RepagoReal)) - 400000
+		THEN (SUM(T.ColocacionMontoReal) - SUM(T.RepagoReal)) - 100000
 		ELSE (SUM(T.ColocacionMontoReal) - SUM(T.RepagoReal))
 	 END) AS CrecimientoAtDate
 

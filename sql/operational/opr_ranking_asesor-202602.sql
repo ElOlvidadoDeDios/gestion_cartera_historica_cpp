@@ -17,12 +17,12 @@ CTE_COLOCACION_ATDATE AS (
 
 SELECT
     IdSAsesor,
-	SUM(ColocacionNumReal) AS ColocacionNum,
-	SUM(ColocacionMontoReal) AS ColocacionMonto
+    SUM(ColocacionNumReal) AS ColocacionNum,
+    SUM(ColocacionMontoReal) AS ColocacionMonto
 FROM
     gc_colocacion
 GROUP BY
-	IdSAsesor
+    IdSAsesor
 
 --- ======================
 )
@@ -36,11 +36,11 @@ CTE_REPAGO_ATDATE AS (
 
 SELECT
     IdSAsesor,
-	SUM(RepagoReal) AS Repago
+    SUM(RepagoReal) AS Repago
 FROM
-	gc_repago
+    gc_repago
 GROUP BY
-	IdSAsesor
+    IdSAsesor
 
 --- ======================
 )
@@ -60,23 +60,27 @@ SELECT
     T_CAR.IdSAsesor,
 
 --- Numero de operaciones
-	T_COL.ColocacionNum,
+    T_COL.ColocacionNum,
 
---- Crecimiento neto 150
-	T_COL.ColocacionMonto - T_REP.Repago - T_CAR.Mora150 AS CrecimientoNeto150,
+--- Crecimiento neto 150 (con ajuste para VCVM)
+    CASE 
+        WHEN T_CAR.IdSAsesor = 'VCVM' 
+        THEN (T_COL.ColocacionMonto - T_REP.Repago - T_CAR.Mora150) - 300000
+        ELSE (T_COL.ColocacionMonto - T_REP.Repago - T_CAR.Mora150)
+    END AS CrecimientoNeto150,
 
 --- Moras
-	T_CAR.Mora9,
-	T_CAR.Mora31
+    T_CAR.Mora9,
+    T_CAR.Mora31
 
 ------
 FROM
 ------
-	gc_cartera_moras T_CAR
+    gc_cartera_moras T_CAR
     INNER JOIN CTE_COLOCACION_ATDATE T_COL
-		ON T_COL.IdSAsesor = T_CAR.IdSAsesor
-	INNER JOIN CTE_REPAGO_ATDATE T_REP
-		ON T_REP.IdSAsesor = T_CAR.IdSAsesor
+        ON T_COL.IdSAsesor = T_CAR.IdSAsesor
+    INNER JOIN CTE_REPAGO_ATDATE T_REP
+        ON T_REP.IdSAsesor = T_CAR.IdSAsesor
 --- ======================
 )
 --SELECT * FROM CTE_STOCK_FLOW
@@ -90,13 +94,13 @@ CTE_Ranks AS ( -- 3) Rankings densos para cada metrica
 ------
 SELECT
 ------
-	B.*,
-	DENSE_RANK() OVER (ORDER BY B.ColocacionNum DESC) AS RankColocacion,
-	DENSE_RANK() OVER (ORDER BY B.CrecimientoNeto150 DESC) AS RankCrecimiento
+    B.*,
+    DENSE_RANK() OVER (ORDER BY B.ColocacionNum DESC) AS RankColocacion,
+    DENSE_RANK() OVER (ORDER BY B.CrecimientoNeto150 DESC) AS RankCrecimiento
 ------
 FROM
 ------
-	CTE_STOCK_FLOW B
+    CTE_STOCK_FLOW B
 
 --- ======================
 ),
@@ -109,14 +113,14 @@ CTE_Scores AS ( -- 4) Puntajes por metrica y total
 ------
 SELECT
 ------
-	R.*,
-	(100 - R.RankColocacion + 1) AS PuntajeColocacion,
-	(100 - R.RankCrecimiento + 1) AS PuntajeCrecimiento,
-	(100 - R.RankColocacion + 1) + (100 - R.RankCrecimiento + 1) AS PuntajeTotal
+    R.*,
+    (100 - R.RankColocacion + 1) AS PuntajeColocacion,
+    (100 - R.RankCrecimiento + 1) AS PuntajeCrecimiento,
+    (100 - R.RankColocacion + 1) + (100 - R.RankCrecimiento + 1) AS PuntajeTotal
 ------
 FROM
 ------
-	CTE_Ranks R
+    CTE_Ranks R
 
 --- ======================
 )
@@ -136,8 +140,8 @@ SELECT
     IdSAsesor,
 
 --- Moras
-	Mora9,
-	Mora31,
+    Mora9,
+    Mora31,
 
 --- Colocacion
     ColocacionNum,
@@ -155,8 +159,8 @@ SELECT
 ------
 FROM
 ------
-	CTE_Scores
+    CTE_Scores
 ------
 ORDER BY
 ------
-	[RankingFinal], IdSAsesor;
+    [RankingFinal], IdSAsesor;

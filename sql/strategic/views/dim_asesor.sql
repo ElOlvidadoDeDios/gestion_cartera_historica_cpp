@@ -83,7 +83,7 @@ FROM
 ------
 WHERE
 ------
-	T_PRE.PERIODO  = '202606'
+	T_PRE.PERIODO  = '202607'
 
 --- Considerar solo asesores vigentes
 	AND T_PRE.SALDO_PRES > 0

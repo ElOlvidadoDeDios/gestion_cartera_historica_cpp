@@ -1,3 +1,12 @@
+import sys
+import os
+
+# 1. Le decimos a Python que incluya la carpeta 'src' en su ruta de búsqueda
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "src")))
+
+# 2. Ahora sí, tus importaciones originales funcionarán sin problema
+from gestion_cartera.core.constants import PATH_ENV
+
 from dotenv import load_dotenv
 from gestion_cartera.core.constants import PATH_ENV
 

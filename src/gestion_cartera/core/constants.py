@@ -1,22 +1,14 @@
+import os
 from pathlib import Path
 from box import Box
 
-### #####
-### Paths
-### #####
+# RUTA DINÁMICA: Calcula la raíz del proyecto basándose en la ubicación de este archivo
+# (Sube 4 niveles: constants.py -> core -> gestion_cartera -> src -> RAIZ)
+PATH_PROJECT = Path(__file__).resolve().parent.parent.parent.parent
 
-PATH_PROJECT = Path(
-    "D:/stage-development/projects-bunisess_intelligence/projects/dile-gestion_cartera_credito-data_project/dile-gestion_cartera-data_engineering/"
-)
 PATH_SQL = Path(PATH_PROJECT, "sql/")
 PATH_SQL_STRATEGIC = Path(PATH_SQL, "strategic/")
 PATH_SQL_OPERATIONAL = Path(PATH_SQL, "operational/")
-
-
-### #############
-### T-SQL Queries
-### #############
-
 
 SQL = Box(
     {
@@ -50,21 +42,8 @@ SQL = Box(
         },
     }
 )
-
-
-### ######
-### Config
-### ######
-
-# Config paths
 PATH_CONFIG_TABLE = Path(PATH_PROJECT, "conf/table.yaml")
 PATH_ENV = Path(PATH_PROJECT, ".env")
-
-
-### ######
-### Participantes del programa "DILE Acompania"
-### ######
-
 PARTICIPANTES: set[str] = {
     "OME       ",
     "FVDF2     ",
@@ -91,9 +70,6 @@ PARTICIPANTES: set[str] = {
     "PPRL8     ",
 }
 
-### ######
-### Main
-### ######
-
 if __name__ == "__main__":
+    print(f"Ruta detectada del proyecto: {PATH_PROJECT}")
     print(PATH_CONFIG_TABLE)

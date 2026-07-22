@@ -7,6 +7,12 @@ from gestion_cartera.components.load import (
     LoaderStrategicInitial,
     LoaderStrategicVariational,
 )
+
+# --- IMPORTACIÓN NUEVA ---
+from gestion_cartera.components.view_builder import ViewBuilder
+
+# -------------------------
+
 import pandas as pd
 from enum import Enum
 from typing import Literal, Optional, Callable
@@ -129,31 +135,34 @@ def pipeline(
 
 
 def pipeline_initial() -> None:
-    pipeline("strategic", "dim_asesor", Variant.INITIAL)
-    pipeline("strategic", "fct_stock", Variant.INITIAL)
-    pipeline("strategic", "fct_flow", Variant.INITIAL)
+    # 🛡️ PROTECCIÓN DE ARQUITECTURA:
+    # Anulamos la carga 'initial' para evitar que Pandas haga DROP TABLE
+    # y destruya las llaves foráneas y la cascada en SQL Server.
+    import logging
+
+    logging.warning(
+        "⚠️ Ejecución 'initial' ignorada para tablas estratégicas. Utilizando estructura protegida en BD."
+    )
+    pass
 
 
 def pipeline_variational() -> None:
-    pipeline("strategic", "dim_asesor", Variant.INITIAL)
-    pipeline("strategic", "fct_stock", Variant.INITIAL)
-    pipeline("strategic", "fct_flow", Variant.INITIAL)
+    # 1. Ejecutar el orquestador de vistas (omite si ya está listo)
+    ViewBuilder.run()
+
+    # 2. Cargas INCREMENTALES (🔥 Corrección Crítica)
+    pipeline("strategic", "dim_asesor", Variant.VARIATIONAL)
+    pipeline("strategic", "fct_stock", Variant.VARIATIONAL)
+    pipeline("strategic", "fct_flow", Variant.VARIATIONAL)
 
 
 def pipeline_operational() -> None:
     pipeline("operational", "creditos_cancelados_no_renovados", Variant.INITIAL)
     pipeline("operational", "avance_cartera", Variant.INITIAL)
-
     pipeline("operational", "cartera_agencia", Variant.INITIAL)
     pipeline("operational", "cartera_asesor", Variant.INITIAL)
-
     pipeline("operational", "ranking_asesor", Variant.OPERATIONAL)
 
 
 def pipeline_operational_ranking_asesor() -> None:
     pipeline("operational", "ranking_asesor", Variant.INITIAL)
-
-
-if __name__ == "__main__":
-    pipeline_variational()
-    pipeline_operational()

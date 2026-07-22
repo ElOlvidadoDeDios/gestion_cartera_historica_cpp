@@ -1,4 +1,3 @@
-GO
 CREATE OR ALTER VIEW gc_tea_cpp WITH ENCRYPTION AS
 /*
 - Sobre creditos extornados (improcedentes)
@@ -20,7 +19,7 @@ FROM
 		ON  T_PRE.CUENTA = T_PTM.CUENTA
 		AND T_PRE.OTORGA = T_PTM.OTORGA
 		AND T_PRE.PAGARE = T_PTM.PAGARE
-		AND T_PRE.PERIODO = '202606'
+		AND T_PRE.PERIODO = '{PERIODO_ACTUAL}'
 	INNER JOIN SEGURIDAD.dbo.ANAREC T_ANA
 		ON  T_ANA.ID_ANAREC = T_PRE.ID_ANA
 		AND T_ANA.FLAG_ANAREC = 'A'
@@ -30,7 +29,7 @@ WHERE
 --- Quitar creditos castigados
 	T_PTM.TIPO_PROD <> '52'
 --- De creditos otorgados el periodo actual
-	AND FORMAT(T_PTM.OTORGA, 'yyyyMM') = '202606'
+	AND FORMAT(T_PTM.OTORGA, 'yyyyMM') = '{PERIODO_ACTUAL}'
 )
 SELECT
 	T.PERIODO AS Periodo,
@@ -44,4 +43,3 @@ GROUP BY
 --ORDER BY
 --	T.Fecha,
 --	T.ID_USER
-GO

@@ -1,77 +1,23 @@
---- ######################
---- NOTAS
---- ######################
-
---- ######################
---- PREAMBULO
---- ######################
-
---- **********************
---- CTEs
 WITH
---- **********************
-
---- ======================
 CTE_ASESOR AS (
---- ======================
-
 SELECT * FROM gc_dim_asesor_cpp 
-
---- ======================
 )
 ,
---- ======================
-
---- ======================
 CTE_CARTERA_MORAS AS (
---- ======================
-
 SELECT * FROM gc_cartera_moras_cpp
-
---- ======================
 )
 ,
---- ======================
-
---- ======================
 CTE_DURACION AS (
---- ======================
-
 SELECT * FROM gc_duracion_cpp
-
---- ======================
 )
 ,
---- ======================
-
---- ======================
 CTE_TEA AS (
---- ======================
-
 SELECT * FROM gc_tea_cpp
-
---- ======================
 ),
---- ======================
-
---- ======================
 CTE_SOCIOS AS (
---- ======================
-
 SELECT * FROM gc_socios_cpp
-
---- ======================
 )
---- ======================
-
-
---- ######################
---- MAIN
---- ######################
-
-------
 SELECT
-------
     T_CAR.Periodo,
 	T_ASE.IdSAgencia,
     T_CAR.IdSAsesor,
@@ -83,9 +29,7 @@ SELECT
     ISNULL(T_TEA.TEA, 0) AS TEA,
     T_SOC.NroSocios,
     T_SOC.NroSociosAnterior
-------
 FROM
-------
 	CTE_ASESOR T_ASE
 	INNER JOIN CTE_CARTERA_MORAS T_CAR
 		ON  T_CAR.IdSAsesor = T_ASE.IdSAsesor
@@ -98,11 +42,8 @@ FROM
     LEFT JOIN CTE_SOCIOS T_SOC
         ON  T_SOC.Periodo = T_CAR.Periodo
         AND T_SOC.IdSAsesor = T_CAR.IdSAsesor
---------
 ORDER BY
---------
     T_CAR.Periodo ASC,
     T_ASE.IdSAgencia ASC,
     T_CAR.IdSAsesor ASC
-------
 ;

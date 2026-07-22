@@ -1,4 +1,5 @@
 import os
+import logging
 from abc import ABC, abstractmethod
 import pandas as pd
 from gestion_cartera.core.utils import DatabaseConnection
@@ -7,6 +8,8 @@ from enum import Enum
 from typing import Literal
 
 from gestion_cartera.core.config import ConfigManager
+
+from gestion_cartera.components.view_builder import ViewBuilder
 
 
 # Producto
@@ -18,8 +21,6 @@ class Loader(ABC):
 
 
 # Estrategias
-
-
 class StrategyLoaderStrategic(Loader, ABC):
 
     engine = DatabaseConnection.get_engine("downstream")
@@ -31,55 +32,66 @@ class StrategyLoaderStrategic(Loader, ABC):
 
 class StrategyLoaderOperational(Loader, ABC):
 
-    # TODO Especificar especifica obtencion de 'engine'
-
     @classmethod
     def run(cls, df: pd.DataFrame, table: str):
         pass
 
 
 # Productos/Estrategias concretas
-
-
 class LoaderStrategicInitial(StrategyLoaderStrategic):
 
     @classmethod
     def run(cls, df: pd.DataFrame, table: str):
+        logging.info(f"🔄 Reemplazando tabla completa (Load Initial): {table}")
         df.to_sql(table, con=cls.engine, if_exists="replace", index=False)
         cls.engine.dispose()
+        logging.info(f"✅ Tabla {table} recreada exitosamente con {len(df)} registros.")
 
 
 class LoaderStrategicVariational(StrategyLoaderStrategic):
 
     @classmethod
     def run(cls, df: pd.DataFrame, table: str):
+        # 1. Obtener el periodo inteligentemente (garantizado por ViewBuilder)
+        period, _ = ViewBuilder.get_dynamic_periods()
 
-        # 1. Intentamos leer el periodo desde tu archivo .env
-        period = os.getenv("PERIODO")
+        logging.info(
+            f"🎯 Iniciando carga incremental para la tabla destino: '{table}' | Periodo: {period}"
+        )
 
-        # 2. Respaldo inteligente: si no está en el .env, lo lee del DataFrame de la vista
-        if not period and "Periodo" in df.columns and not df.empty:
-            period = str(df["Periodo"].iloc[0])
-        elif not period and "PERIODO" in df.columns and not df.empty:
-            period = str(df["PERIODO"].iloc[0])
+        # 🔥 CORRECCIÓN DEL BUG DE ACUMULACIÓN:
+        # Inyectamos el periodo obligatoriamente al DataFrame para que SQL Server no ponga NULL
+        if not df.empty:
+            if "Periodo" not in df.columns and "PERIODO" not in df.columns:
+                df["Periodo"] = period
+            elif "Periodo" in df.columns:
+                df["Periodo"] = period  # Homologamos por seguridad
+            elif "PERIODO" in df.columns:
+                df["PERIODO"] = period
 
-        if not period:
-            raise ValueError(
-                f"No se pudo determinar el periodo para la tabla {table}. Verifica el archivo .env o la vista SQL."
-            )
-
-        # 3. Lógica Incremental: Borra solo la "foto" actual y hace append de lo nuevo
+        # 3. Lógica Incremental: Borra solo la "foto" actual y hace append
         with cls.engine.begin() as conn:
+            logging.info(
+                f"🗑️  Ejecutando DELETE FROM {table} WHERE Periodo = '{period}'..."
+            )
             conn.execute(
                 text(f"DELETE FROM {table} WHERE Periodo = :periodo"),
                 {"periodo": period},
             )
-            df.to_sql(table, con=conn, if_exists="append", index=False)
+
+            if not df.empty:
+                logging.info(
+                    f"💾 Insertando {len(df)} nuevos registros en '{table}'..."
+                )
+                df.to_sql(table, con=conn, if_exists="append", index=False)
+                logging.info(f"✅ Carga incremental finalizada con éxito en '{table}'.")
+            else:
+                logging.warning(
+                    f"⚠️ El DataFrame para '{table}' está vacío. No se insertaron registros."
+                )
 
 
 # Contextos
-
-
 class LoaderStrategic(StrategyLoaderStrategic):
 
     def __init__(self, strategy: StrategyLoaderStrategic | None = None) -> None:
@@ -98,9 +110,7 @@ class LoaderStrategic(StrategyLoaderStrategic):
 
 
 # Factory
-
-
-class BIType(Enum):  # Types of business intelligence
+class BIType(Enum):
     strategic = "strategic"
     operational = "operational"
 
@@ -116,12 +126,4 @@ class LoaderFactory:
         if bi_type is BIType.strategic:
             return LoaderStrategic()
         elif bi_type is BIType.operational:
-            # Aquí asumimos que crearás la clase LoaderOperational más adelante
             pass
-
-
-if __name__ == "__main__":
-    loader_strategic = LoaderFactory.get_loader("strategic")
-    loader_strategic.strategy = LoaderStrategicVariational
-    # Nota: df debe estar definido antes de llamar a run en tu flujo real
-    loader_strategic.run(df, ConfigManager.table.fct.stock)

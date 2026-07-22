@@ -1,4 +1,3 @@
-GO
 CREATE OR ALTER VIEW gc_dim_asesor_cpp WITH ENCRYPTION AS
 /*
 Recuperados de tramo de mora superior al de un recuperador de agencia
@@ -48,7 +47,7 @@ FROM
     INNER JOIN SEGURIDAD.dbo.TCARGO_USER T_CAR
 		ON	T_CAR.ID_CARGO  = T_PER.ID_CARGO
 WHERE
-	T_PRE.PERIODO  = '202606'
+	T_PRE.PERIODO  = '{PERIODO_ACTUAL}'
 --- Considerar solo asesores vigentes
 	AND T_PRE.SALDO_PRES > 0
 --- Excluir casos excepcionales
@@ -70,4 +69,3 @@ FROM
 --ORDER BY
 --	IdSAgencia ASC,
 --	IdSAsesor  ASC
-GO

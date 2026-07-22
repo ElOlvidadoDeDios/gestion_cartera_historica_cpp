@@ -1,1 +1,1 @@
-SELECT * FROM gc_dim_asesor;
+SELECT * FROM gc_dim_asesor_cpp;

@@ -15,7 +15,7 @@ WITH
 CTE_ASESOR AS (
 --- ======================
 
-SELECT * FROM gc_dim_asesor 
+SELECT * FROM gc_dim_asesor_cpp 
 
 --- ======================
 )
@@ -26,7 +26,7 @@ SELECT * FROM gc_dim_asesor
 CTE_CARTERA_MORAS AS (
 --- ======================
 
-SELECT * FROM gc_cartera_moras
+SELECT * FROM gc_cartera_moras_cpp
 
 --- ======================
 )
@@ -37,7 +37,7 @@ SELECT * FROM gc_cartera_moras
 CTE_DURACION AS (
 --- ======================
 
-SELECT * FROM gc_duracion
+SELECT * FROM gc_duracion_cpp
 
 --- ======================
 )
@@ -48,7 +48,7 @@ SELECT * FROM gc_duracion
 CTE_TEA AS (
 --- ======================
 
-SELECT * FROM gc_tea
+SELECT * FROM gc_tea_cpp
 
 --- ======================
 ),
@@ -58,7 +58,7 @@ SELECT * FROM gc_tea
 CTE_SOCIOS AS (
 --- ======================
 
-SELECT * FROM gc_socios
+SELECT * FROM gc_socios_cpp
 
 --- ======================
 )

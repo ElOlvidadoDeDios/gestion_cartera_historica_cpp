@@ -1,11 +1,11 @@
 WITH
 
 CTE_fechas AS (
-SELECT DISTINCT A.Fecha, 1 AS Llave FROM gc_repago A
+SELECT DISTINCT A.Fecha, 1 AS Llave FROM gc_repago_cpp A
 ),
 
 CTE_asesores AS (
-SELECT DISTINCT A.IdSAgencia, A.IdSAsesor, 1 AS Llave FROM gc_dim_asesor A WHERE A.Cargo = 'ANALISTA DE CREDITOS I'
+SELECT DISTINCT A.IdSAgencia, A.IdSAsesor, 1 AS Llave FROM gc_dim_asesor_cpp A WHERE A.Cargo = 'ANALISTA DE CREDITOS I'
 ),
 
 CTE_producto_cartersiano AS (
@@ -28,8 +28,8 @@ SELECT
     ISNULL(NEXO_REP.RepagoReal, 0)          As RepagoReal
 FROM
     CTE_producto_cartersiano      CTE_PC
-    LEFT OUTER JOIN gc_colocacion NEXO_COL ON NEXO_COL.Fecha = CTE_PC.Fecha AND NEXO_COL.IdSAsesor = CTE_PC.IdSAsesor
-    LEFT OUTER JOIN gc_repago     NEXO_REP ON NEXO_REP.Fecha = CTE_PC.Fecha AND NEXO_REP.IdSAsesor = CTE_PC.IdSAsesor
+    LEFT OUTER JOIN gc_colocacion_cpp NEXO_COL ON NEXO_COL.Fecha = CTE_PC.Fecha AND NEXO_COL.IdSAsesor = CTE_PC.IdSAsesor
+    LEFT OUTER JOIN gc_repago_cpp     NEXO_REP ON NEXO_REP.Fecha = CTE_PC.Fecha AND NEXO_REP.IdSAsesor = CTE_PC.IdSAsesor
 --ORDER BY
 --    CTE_PC.Fecha ASC,
 --    CTE_PC.IdSAgencia ASC,

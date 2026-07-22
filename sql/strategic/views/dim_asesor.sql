@@ -1,16 +1,13 @@
 GO
-CREATE OR ALTER VIEW gc_dim_asesor WITH ENCRYPTION AS
+CREATE OR ALTER VIEW gc_dim_asesor_cpp WITH ENCRYPTION AS
 /*
 Recuperados de tramo de mora superior al de un recuperador de agencia
 se crean dentro de la agencia molino. Asi que hay que excluir a estos.
 */
---- ***************
 WITH
---- ***************
 CTE_AUX_ASESOR AS (
 SELECT
 	T_PRE.PERIODO AS Periodo,
-
 --- ID Agencia Estratégica con soporte para 13 agencias
 CASE
     --- Segmentar agencias digitales (Base SICOOP 98) de 1 y 2 dígitos
@@ -24,7 +21,6 @@ CASE
             WHEN RTRIM(T_ANA.ID_USER) LIKE '%7'  THEN '07' -- Lima Los Olivos
             ELSE '98'
         END
-
     --- Segmentar sucursales de Wanchaq (01) y Magisterio (09)
     WHEN T_ANA.ID_AGE = '01' THEN
         CASE
@@ -52,7 +48,7 @@ FROM
     INNER JOIN SEGURIDAD.dbo.TCARGO_USER T_CAR
 		ON	T_CAR.ID_CARGO  = T_PER.ID_CARGO
 WHERE
-	T_PRE.PERIODO  = '202607'
+	T_PRE.PERIODO  = '202606'
 --- Considerar solo asesores vigentes
 	AND T_PRE.SALDO_PRES > 0
 --- Excluir casos excepcionales

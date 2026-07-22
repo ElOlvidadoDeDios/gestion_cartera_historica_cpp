@@ -20,7 +20,7 @@ SELECT
     SUM(ColocacionNumReal) AS ColocacionNum,
     SUM(ColocacionMontoReal) AS ColocacionMonto
 FROM
-    gc_colocacion
+    gc_colocacion_cpp
 GROUP BY
     IdSAsesor
 
@@ -38,7 +38,7 @@ SELECT
     IdSAsesor,
     SUM(RepagoReal) AS Repago
 FROM
-    gc_repago
+    gc_repago_cpp
 GROUP BY
     IdSAsesor
 
@@ -76,7 +76,7 @@ SELECT
 ------
 FROM
 ------
-    gc_cartera_moras T_CAR
+    gc_cartera_moras_cpp T_CAR
     INNER JOIN CTE_COLOCACION_ATDATE T_COL
         ON T_COL.IdSAsesor = T_CAR.IdSAsesor
     INNER JOIN CTE_REPAGO_ATDATE T_REP

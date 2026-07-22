@@ -20,7 +20,7 @@ SELECT DISTINCT
 	T.Fecha,
 	1 AS Llave
 FROM
-	gc_repago T
+	gc_repago_cpp T
 
 --- ======================
 )
@@ -36,7 +36,7 @@ SELECT DISTINCT
 	T.IdSAsesor,
 	1 AS Llave
 FROM
-	gc_dim_asesor T
+	gc_dim_asesor_cpp T
 
 --- ======================
 )
@@ -83,12 +83,12 @@ FROM
     CTE_PRODUCTO_CARTESIANO T_PC
 
 --- Colocacion: numero y monto
-    LEFT OUTER JOIN gc_colocacion T_COL
+    LEFT OUTER JOIN gc_colocacion_cpp T_COL
 		ON  T_COL.Fecha = T_PC.Fecha
 		AND T_COL.IdSAsesor = T_PC.IdSAsesor
 
 --- Repago
-    LEFT OUTER JOIN gc_repago T_REP
+    LEFT OUTER JOIN gc_repago_cpp T_REP
 		ON  T_REP.Fecha = T_PC.Fecha
 		AND T_REP.IdSAsesor = T_PC.IdSAsesor
 --------

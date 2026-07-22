@@ -52,7 +52,7 @@ SELECT
 FROM
   CTE
   INNER JOIN
-	gc_dim_asesor A
+	gc_dim_asesor_cpp A
 		ON A.IdSAsesor = CTE.IdSAsesor
 WHERE A.IdSAgencia = '02'
 GROUP BY

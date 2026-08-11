@@ -1,0 +1,98 @@
+/* =========================================================
+   VARIABLES GLOBALES
+   ========================================================= */
+:root {
+    --bg-main: #f4f6f9;
+    --bg-white: #ffffff;
+    --sidebar-bg: #1e293b;
+    --text-main: #333333;
+    --text-muted: #666666;
+    
+    --dile-green: #228b22;
+    --dile-gray-title: #9ca3af;
+    --dile-blue: #1d4ed8;
+    --dile-red: #dc2626;
+    
+    --border-color: #e5e7eb;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, sans-serif; }
+
+body { background-color: var(--bg-main); color: var(--text-main); }
+
+/* =========================================================
+   LAYOUT PRINCIPAL
+   ========================================================= */
+.app-container { display: flex; height: 100vh; overflow: hidden; }
+
+.sidebar { width: 240px; background-color: var(--sidebar-bg); color: var(--bg-white); flex-shrink: 0;}
+.sidebar-logo { height: 60px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #334155; }
+.sidebar-logo span { color: #60a5fa; }
+.sidebar-nav ul { list-style: none; padding: 15px; }
+.sidebar-nav a { display: block; padding: 10px; color: white; text-decoration: none; border-radius: 5px; margin-bottom: 5px; font-size: 0.9rem;}
+.sidebar-nav a.active, .sidebar-nav a:hover { background-color: var(--dile-blue); }
+
+.main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+.top-header { height: 60px; background-color: var(--bg-white); display: flex; justify-content: space-between; align-items: center; padding: 0 20px; border-bottom: 1px solid var(--border-color); flex-shrink: 0;}
+.header-filters select { padding: 6px 12px; border: 1px solid var(--border-color); border-radius: 4px; margin-left: 10px; font-size: 0.9rem;}
+
+.dashboard-scroll { flex: 1; overflow-y: auto; background-color: var(--bg-main); }
+
+/* CONTENEDOR CENTRAL: Evita que el dashboard se estire demasiado en monitores grandes */
+.dashboard-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* =========================================================
+   COMPONENTES Y SECCIONES
+   ========================================================= */
+.section-card { background: var(--bg-white); border: 1px solid var(--border-color); padding: 15px; }
+.grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+/* Títulos */
+.section-main-title { background-color: var(--dile-green); color: white; text-align: center; padding: 8px; font-weight: bold; font-size: 1.1rem; }
+.section-sub-title { background-color: var(--dile-green); color: white; text-align: center; padding: 4px; font-size: 0.95rem; margin-top: 2px;}
+.section-gray-title { background-color: var(--dile-gray-title); color: white; text-align: center; padding: 4px; font-weight: 600; font-size: 0.9rem;}
+.bg-gray-500 { background-color: #6b7280; }
+
+/* =========================================================
+   DÍAS LABORALES
+   ========================================================= */
+.days-container { display: flex; justify-content: space-between; margin-bottom: 10px; }
+.day-stat { display: flex; flex-direction: column; }
+.day-label { font-size: 0.8rem; color: var(--text-muted); }
+.day-value { font-size: 2rem; font-weight: bold; }
+.progress-bar-container { width: 100%; height: 16px; background-color: #1e3a8a; }
+.progress-bar-fill { height: 100%; background-color: #3b82f6; }
+
+/* =========================================================
+   TABLAS
+   ========================================================= */
+.table-container { width: 100%; overflow-x: auto; margin-bottom: 15px; }
+.dile-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+.dile-table th { border-bottom: 2px solid var(--border-color); padding: 6px; font-weight: bold; }
+.dile-table td { padding: 6px; border-bottom: 1px solid var(--border-color); }
+.dile-table tfoot td { font-weight: bold; border-top: 2px solid var(--text-main); }
+.dile-table.compact td, .dile-table.compact th { padding: 4px; font-size: 0.75rem; }
+
+/* =========================================================
+   GRÁFICOS
+   ========================================================= */
+.gauge-container { text-align: center; border: 1px solid var(--border-color); padding: 10px; width: 80%; margin: 0 auto; }
+.gauge-container h4 { font-size: 0.85rem; margin-bottom: 10px; }
+.gauge-placeholder { position: relative; height: 130px; display: flex; justify-content: center; }
+.gauge-value { position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 1.5rem; font-weight: bold; color: var(--text-main); }
+
+/* Contenedor estricto para Chart.js para que no se desborde */
+.chart-wrapper { position: relative; height: 220px; width: 100%; }
+.chart-wrapper.tall { height: 280px; } /* Para gráficos con más datos */
+
+/* Utilidades */
+.mt-2 { margin-top: 10px; } .mt-3 { margin-top: 15px; } .mt-4 { margin-top: 20px; } .mt-5 { margin-top: 30px; } .mb-2 { margin-bottom: 10px; }
+.text-center { text-align: center; } .text-right { text-align: right; }
+.text-blue { color: var(--dile-blue); } .text-red { color: var(--dile-red); }
+
+@media (max-width: 900px) { .grid-2-col { grid-template-columns: 1fr; } }

@@ -1,0 +1,14 @@
+ensure==1.0.4
+greenlet==3.5.4
+holidays==0.102
+numpy==2.5.1
+pandas==3.0.5
+pyodbc==5.3.0
+python-box==7.4.1
+python-dateutil==2.9.0.post0
+python-dotenv==1.2.2
+PyYAML==6.0.3
+six==1.17.0
+SQLAlchemy==2.0.51
+typing_extensions==4.16.0
+tzdata==2026.3

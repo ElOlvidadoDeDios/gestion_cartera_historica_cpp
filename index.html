@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte Gerencial - DILE</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- BARRA LATERAL -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <h1>DILE<span>BI</span></h1>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#" class="active">Reporte Gerencial</a></li>
+                    <li><a href="#">Supervisión Asesores</a></li>
+                    <li><a href="#">Productividad Diaria</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <div class="main-content">
+            <header class="top-header">
+                <h2>Reporte Gerencial</h2>
+                <div class="header-filters">
+                    <select><option>Periodo: 202606</option></select>
+                    <select><option>Agencia: Todas</option></select>
+                </div>
+            </header>
+
+            <main class="dashboard-scroll">
+                <!-- CONTENEDOR INTERNO PARA LIMITAR EL ANCHO Y EVITAR ESTIRAMIENTO -->
+                <div class="dashboard-inner">
+                    
+                    <!-- 1. TRANSCURSO DE LOS DÍAS -->
+                    <section class="section-card" style="border: none; background: transparent; padding-top: 0;">
+                        <div class="days-container">
+                            <div class="day-stat text-center">
+                                <span class="day-label">Días Laborales TOTALES</span>
+                                <span class="day-value">24</span>
+                            </div>
+                            <div class="day-stat text-center text-blue">
+                                <span class="day-label">Días Laborales TRANSCURRIDOS</span>
+                                <span class="day-value">22</span>
+                            </div>
+                            <div class="day-stat text-center text-red">
+                                <span class="day-label">Días Laborales RESTANTES</span>
+                                <span class="day-value">2</span>
+                            </div>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" style="width: 91.6%;"></div>
+                        </div>
+                    </section>
+
+                    <!-- 2. INDICADORES - AVANCES (Operaciones) -->
+                    <div class="section-main-title mt-3">INDICADORES - AVANCES</div>
+                    <div class="section-sub-title">Avance de Operaciones</div>
+                    
+                    <div class="grid-2-col">
+                        <!-- Columna Izquierda: Cantidad -->
+                        <section class="section-card">
+                            <div class="section-gray-title">En Cantidad de Colocaciones</div>
+                            <div class="table-container mt-3">
+                                <table class="dile-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Agencia</th>
+                                            <th class="text-right">Operaciones</th>
+                                            <th class="text-right">Meta Agencia</th>
+                                            <th class="text-right">Avance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>Pucallpa</td><td class="text-right">283</td><td class="text-right">307</td><td class="text-right">92%</td></tr>
+                                        <tr><td>Arequipa</td><td class="text-right">133</td><td class="text-right">171</td><td class="text-right">78%</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="gauge-container mt-3">
+                                <h4>COOPAC - Cumplimiento de la Meta Mensual</h4>
+                                <div class="gauge-placeholder">
+                                    <canvas id="gaugeOperaciones"></canvas>
+                                    <div class="gauge-value">93%</div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Columna Derecha: Monto -->
+                        <section class="section-card">
+                            <div class="section-gray-title">En Monto de Colocaciones</div>
+                            <div class="table-container mt-3">
+                                <table class="dile-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Agencia</th>
+                                            <th class="text-right">Monto Desembolsos</th>
+                                            <th class="text-right">Meta Agencia</th>
+                                            <th class="text-right">Avance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>Wanchaq</td><td class="text-right">S/ 782,234</td><td class="text-right">S/ 1,483,979</td><td class="text-right">53%</td></tr>
+                                        <tr><td>San Jerónimo</td><td class="text-right">S/ 796,215</td><td class="text-right">S/ 1,206,028</td><td class="text-right">66%</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="gauge-container mt-3">
+                                <h4>COOPAC - Cumplimiento de la Meta Mensual</h4>
+                                <div class="gauge-placeholder">
+                                    <canvas id="gaugeMonto"></canvas>
+                                    <div class="gauge-value">71%</div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- 3. GRÁFICOS DE BARRAS -->
+                    <div class="grid-2-col mt-4">
+                        <section class="section-card">
+                            <h4 class="mb-2" style="font-size: 0.9rem;">Avance en términos absolutos (Operaciones)</h4>
+                            <div class="chart-wrapper tall"><canvas id="barOpsAbsoluto"></canvas></div>
+                            <h4 class="mt-4 mb-2" style="font-size: 0.9rem;">Avance en términos porcentuales</h4>
+                            <div class="chart-wrapper tall"><canvas id="barOpsPorcentual"></canvas></div>
+                        </section>
+                        <section class="section-card">
+                            <h4 class="mb-2" style="font-size: 0.9rem;">Avance en términos absolutos (Montos)</h4>
+                            <div class="chart-wrapper tall"><canvas id="barMontoAbsoluto"></canvas></div>
+                            <h4 class="mt-4 mb-2" style="font-size: 0.9rem;">Avance en términos porcentuales</h4>
+                            <div class="chart-wrapper tall"><canvas id="barMontoPorcentual"></canvas></div>
+                        </section>
+                    </div>
+
+                    <!-- 5. MORAS (Ejemplo) -->
+                    <div class="section-main-title mt-5">Moras</div>
+                    <div class="section-sub-title bg-gray-500 text-white">Mora CPP</div>
+                    <section class="section-card mt-2">
+                        <div class="grid-2-col mt-4">
+                            <div>
+                                <h4 style="font-size: 0.9rem; text-align: center; margin-bottom:10px;">Cumplimiento de la Meta Mensual (Línea)</h4>
+                                <div class="chart-wrapper"><canvas id="lineMoraCPP"></canvas></div>
+                            </div>
+                            <div>
+                                <h4 style="font-size: 0.9rem; text-align: center; margin-bottom:10px;">Excedente de Mora (Barras)</h4>
+                                <div class="chart-wrapper"><canvas id="barMoraCPPExc"></canvas></div>
+                            </div>
+                        </div>
+                    </section>
+                </div> <!-- Fin dashboard-inner -->
+            </main>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         SCRIPT DE GRÁFICOS (CHART.JS)
+         ========================================== -->
+    <script>
+        // Configuración Global para que los gráficos se adapten al contenedor
+        Chart.defaults.maintainAspectRatio = false;
+        Chart.defaults.font.size = 10;
+
+        // 1. GAUGE: Operaciones (Semicirculo)
+        new Chart(document.getElementById('gaugeOperaciones'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Logrado', 'Faltante'],
+                datasets: [{
+                    data: [93, 7], // 93% logrado
+                    backgroundColor: ['#22c55e', '#e5e7eb'], // Verde y gris
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                rotation: -90, circumference: 180, cutout: '75%', // Lo hace semicírculo
+                plugins: { legend: { display: false }, tooltip: { enabled: false } }
+            }
+        });
+
+        // 2. GAUGE: Montos (Semicirculo)
+        new Chart(document.getElementById('gaugeMonto'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Logrado', 'Faltante'],
+                datasets: [{
+                    data: [71, 29], // 71% logrado
+                    backgroundColor: ['#22c55e', '#e5e7eb'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                rotation: -90, circumference: 180, cutout: '75%',
+                plugins: { legend: { display: false }, tooltip: { enabled: false } }
+            }
+        });
+
+        // 3. COMBO: Avance Operaciones Absoluto (Barras Azules + Línea Naranja de Meta)
+        new Chart(document.getElementById('barOpsAbsoluto'), {
+            type: 'bar',
+            data: {
+                labels: ['Lima Olivos', 'Pucallpa', 'Quillabamba', 'Wanchaq', 'Molino'],
+                datasets: [
+                    { type: 'line', label: 'Meta', data: [292, 307, 259, 240, 222], borderColor: '#f97316', backgroundColor: '#f97316', borderWidth: 2, fill: false, tension: 0 },
+                    { type: 'bar', label: 'Operaciones', data: [286, 283, 266, 220, 214], backgroundColor: '#1d4ed8' }
+                ]
+            },
+            options: {
+                plugins: { legend: { position: 'top' } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        // 4. BARRAS HORIZONTALES: Avance Operaciones Porcentual
+        new Chart(document.getElementById('barOpsPorcentual'), {
+            type: 'bar',
+            data: {
+                labels: ['Quillabamba', 'Lima Olivos', 'Molino', 'Pucallpa', 'Wanchaq'],
+                datasets: [{
+                    label: '% Cumplimiento', data: [100, 98, 96, 92, 92], backgroundColor: '#1d4ed8'
+                }]
+            },
+            options: {
+                indexAxis: 'y', // Lo vuelve horizontal
+                plugins: { legend: { display: false } },
+                scales: { x: { max: 100 } } // Escala hasta 100%
+            }
+        });
+
+        // 5. COMBO: Avance Montos Absoluto
+        new Chart(document.getElementById('barMontoAbsoluto'), {
+            type: 'bar',
+            data: {
+                labels: ['Quillabamba', 'San Jerónimo', 'Wanchaq', 'Magisterio'],
+                datasets: [
+                    { type: 'line', label: 'Meta (Mil)', data: [1158, 1206, 1483, 764], borderColor: '#f97316', backgroundColor: '#f97316', borderWidth: 2, tension: 0 },
+                    { type: 'bar', label: 'Logrado (Mil)', data: [797, 796, 782, 698], backgroundColor: '#1d4ed8' }
+                ]
+            }
+        });
+
+        // 6. BARRAS HORIZONTALES: Avance Montos Porcentual
+        new Chart(document.getElementById('barMontoPorcentual'), {
+            type: 'bar',
+            data: {
+                labels: ['Pucallpa', 'Lima Olivos', 'Magisterio', 'Quillabamba'],
+                datasets: [{ data: [100, 100, 91, 69], backgroundColor: '#1d4ed8' }]
+            },
+            options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { max: 100 } } }
+        });
+
+        // 7. LINEA: Mora CPP vs Meta
+        new Chart(document.getElementById('lineMoraCPP'), {
+            type: 'line',
+            data: {
+                labels: ['Pucallpa', 'Arequipa', 'Lima SJL', 'Magisterio', 'San Jerónimo'],
+                datasets: [
+                    { label: '% Vigente Mora', data: [2.34, 3.27, 3.92, 12.99, 18.38], borderColor: '#1d4ed8', backgroundColor: '#1d4ed8', tension: 0.3, borderWidth: 2 },
+                    { label: 'Meta (10%)', data: [10, 10, 10, 10, 10], borderColor: '#dc2626', backgroundColor: '#dc2626', borderWidth: 2, pointRadius: 0 }
+                ]
+            }
+        });
+
+        // 8. BARRAS: Excedente Mora
+        new Chart(document.getElementById('barMoraCPPExc'), {
+            type: 'bar',
+            data: {
+                labels: ['Pucallpa', 'Arequipa', 'Magisterio', 'San Jerónimo'],
+                datasets: [{
+                    label: 'Excedente',
+                    data: [-39757, -16323, 66314, 299256],
+                    backgroundColor: '#1d4ed8'
+                }]
+            }
+        });
+    </script>
+</body>
+</html>

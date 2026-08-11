@@ -54,7 +54,7 @@ WHERE
 	AND T_USU.ID_USER NOT IN (
 	'PRECASTIGO' -- Cartera de castigos
 	, 'RJULI6', 'RJULIACA', 'RLIMA7', 'RQUILLA3', 'RSICUA4' -- Carteras de recuperacion fuera de agencia
-	, 'LHR5', 'HTEJ5', 'TKPN5', 'GHVJ5', 'OTA5', 'SDHF5', 'CMN5', 'HQND5' -- Recuperados de tramo de mora superior al de un recuperador de agencia
+	, 'LHR5', 'HTEJ5', 'TKPN5', 'GHVJ5', 'OTA5', 'SDHF5', 'CMN5', 'HQND5', 'RTRES' -- Recuperados de tramo de mora superior al de un recuperador de agencia
 	)
 )
 SELECT DISTINCT

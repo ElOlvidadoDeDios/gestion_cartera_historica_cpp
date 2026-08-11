@@ -1,58 +1,45 @@
 import sys
 import os
-
-# 1. Le decimos a Python que incluya la carpeta 'src' en su ruta de búsqueda
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "src")))
-
-# 2. Ahora sí, tus importaciones originales funcionarán sin problema
-from gestion_cartera.core.constants import PATH_ENV
-
+import argparse
+import logging
+import warnings
+import pyodbc
+import subprocess
+from logging.handlers import RotatingFileHandler
 from dotenv import load_dotenv
+
+# 1. Modificar el path para los módulos locales
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(BASE_DIR, "src"))
+
+# 🔥 LA CORRECCIÓN CLAVE: Cargar el .env AQUÍ, antes de que los pipelines intenten leerlo
 from gestion_cartera.core.constants import PATH_ENV
 
 load_dotenv(PATH_ENV)
-import argparse
-import os
-import atexit
-import logging
-import warnings
-import pyodbc  # 🔥 AÑADIDO: Para conectar a la BD
 
-# Silenciar las advertencias estéticas de Pandas en el log
-warnings.filterwarnings("ignore", category=UserWarning, module="pandas")
-
-# 🔥 SOLUCIÓN CRÍTICA: Calcular la ruta absoluta automática del proyecto
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-LOG_FILE = os.path.join(BASE_DIR, "ejecucion.log")
-
-MAX_REGISTROS = 100
-
-# Configurar el sistema de rastro (consola + archivo ejecucion.log absoluto)
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[logging.FileHandler(LOG_FILE, encoding="utf-8"), logging.StreamHandler()],
-)
-
-
-# Algoritmo de limpieza de registros históricos (usa la ruta absoluta)
-def purgar_logs_antiguos():
-    if os.path.exists(LOG_FILE):
-        with open(LOG_FILE, "r", encoding="utf-8") as f:
-            lineas = f.readlines()
-
-        if len(lineas) > MAX_REGISTROS:
-            with open(LOG_FILE, "w", encoding="utf-8") as f:
-                f.writelines(lineas[-MAX_REGISTROS:])
-
-
-atexit.register(purgar_logs_antiguos)
-
+# 2. Ahora sí importamos los pipelines (ya tendrán las credenciales disponibles)
 from gestion_cartera.pipelines import (
     pipeline_initial,
     pipeline_variational,
     pipeline_operational,
     pipeline_operational_ranking_asesor,
+)
+
+# Silenciar las advertencias estéticas de Pandas en el log
+warnings.filterwarnings("ignore", category=UserWarning, module="pandas")
+
+# Configuración de Logs con Rotación Automática (Reemplaza la función manual)
+# Mantiene un máximo de 1MB por archivo y guarda hasta 2 archivos de respaldo.
+LOG_FILE = os.path.join(BASE_DIR, "ejecucion.log")
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        RotatingFileHandler(
+            LOG_FILE, maxBytes=1024 * 1024, backupCount=2, encoding="utf-8"
+        ),
+        logging.StreamHandler(),
+    ],
 )
 
 PIPELINES = {
@@ -63,10 +50,10 @@ PIPELINES = {
 }
 
 
-# 🔥 NUEVA FUNCIÓN: Actualiza la tabla de Log en SQL Server
+# 🔥 FUNCIÓN CORREGIDA: Cierre seguro garantizado (finally)
 def actualizar_fecha_bd():
+    conn = None
     try:
-        # Extraemos las variables exactas de tu .env
         server = os.getenv("DB_DOWNSTREAM_SERVER")
         db = os.getenv("DB_DOWNSTREAM_DATABASE")
 
@@ -80,16 +67,47 @@ def actualizar_fecha_bd():
         conn = pyodbc.connect(conn_str)
         cursor = conn.cursor()
 
-        # Ejecuta el UPDATE con la fecha y hora actual del servidor local
+        # 1. Intentamos hacer el UPDATE
         cursor.execute(
             "UPDATE [dbo].[Log_Actualizacion] SET UltimaActualizacion = GETDATE() WHERE Id = 1;"
         )
-        conn.commit()
-        conn.close()
 
+        # 2. Verificamos si realmente se modificó; si no, forzamos el INSERT
+        if cursor.rowcount == 0:
+            logging.warning(
+                "⚠️ No se encontró el Id = 1. Creando el registro inicial..."
+            )
+            cursor.execute(
+                "INSERT INTO [dbo].[Log_Actualizacion] (Id, UltimaActualizacion) VALUES (1, GETDATE());"
+            )
+
+        conn.commit()
         logging.info("✅ Fecha de Última Actualización renovada exitosamente en BD.")
+
     except Exception as e:
         logging.error(f"❌ Error al actualizar la fecha en BD: {e}")
+
+    finally:
+        # Esto garantiza que el motor cierre la conexión SIEMPRE, haya error o no.
+        if conn:
+            conn.close()
+
+
+def actualizar_powerbi():
+    ruta_script = os.path.join(BASE_DIR, "refresh_powerbi.ps1")
+    try:
+        resultado = subprocess.run(
+            ["powershell", "-ExecutionPolicy", "Bypass", "-File", ruta_script],
+            capture_output=True,
+            text=True,
+        )
+        if resultado.returncode == 0:
+            print(resultado.stdout)
+            logging.info("✅ Power BI actualizado correctamente mediante PowerShell.")
+        else:
+            logging.error(f"❌ Error de PowerShell: {resultado.stderr}")
+    except Exception as e:
+        logging.error(f"❌ Excepción fatal al intentar ejecutar PowerShell: {e}")
 
 
 def main() -> None:
@@ -103,15 +121,26 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    print("\n" + "=" * 60)
+    print("  ETL COMPLETO - GESTION CARTERA HISTORICA CPP")
+    print("=" * 60)
+
+    print(f"\n[1/3] Ejecutando procesamiento principal ({args.pipeline})...")
     logging.info(f"🚀 Iniciando ejecución de pipeline: {args.pipeline}")
 
-    # 1. Ejecuta el pipeline solicitado por la tarea programada
     PIPELINES[args.pipeline]()
 
-    # 2. Si el pipeline termina sin errores, actualiza la fecha en SQL
+    print("\n[2/3] Registrando hora de última actualización en BD...")
     actualizar_fecha_bd()
 
-    logging.info(f"🏁 Ejecución de {args.pipeline} finalizada.")
+    print("\n[3/3] Sincronizando el Dashboard en Power BI Service...")
+    actualizar_powerbi()
+
+    print("\n" + "=" * 60)
+    print("  PROCESO COMPLETADO CON EXITO")
+    print("=" * 60 + "\n")
+
+    logging.info(f"🏁 Ejecución total de {args.pipeline} finalizada.")
 
 
 if __name__ == "__main__":

@@ -92,7 +92,7 @@ def ejecutar_sincronizacion_diaria():
               AND T_PTM.TIPO_PROD <> '52'
               AND T_USU.ID_USER NOT IN (
                   'PRECASTIGO', 'RJULI6', 'RJULIACA', 'RLIMA7', 'RQUILLA3', 'RSICUA4',
-                  'LHR5', 'HTEJ5', 'TKPN5', 'GHVJ5', 'OTA5', 'SDHF5', 'CMN5', 'HQND5'
+                  'LHR5', 'HTEJ5', 'TKPN5', 'GHVJ5', 'OTA5', 'SDHF5', 'CMN5', 'HQND5', 'RTRES'
               )
         )
         SELECT 

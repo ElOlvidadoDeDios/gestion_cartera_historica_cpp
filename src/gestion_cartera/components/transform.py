@@ -14,35 +14,54 @@ class Transformer(ABC):
     def run(df: pd.DataFrame) -> pd.DataFrame:
         pass
 
+
 # Productos concretos
+
 
 class TransformerDimAsesor(Transformer):
 
     @staticmethod
     def _alias_asesor(var_name):
         try:
-            apellidos, nombres = var_name.split(', ')
+            apellidos, nombres = var_name.split(", ")
         except ValueError:
             apellidos, nombres = var_name, ""
 
-        iniciales_apellidos = ''.join([a[0].upper() for a in apellidos.split()]) if apellidos else ""
-        primer_nombre = nombres.split()[0].capitalize() if nombres.strip() else "ANONIMO"
+        iniciales_apellidos = (
+            "".join([a[0].upper() for a in apellidos.split()]) if apellidos else ""
+        )
+        primer_nombre = (
+            nombres.split()[0].capitalize() if nombres.strip() else "ANONIMO"
+        )
         return f"{primer_nombre} {iniciales_apellidos}".strip()
-
 
     @staticmethod
     def _run_alias_asesor(df: pd.DataFrame) -> pd.DataFrame:
         df = df.copy()
-        df['Asesor'] = df['AsesorNombresApellidos'].apply(TransformerDimAsesor._alias_asesor)
-        return df
 
+        # 1. Creamos el alias base ("Cesar PC")
+        df["Asesor"] = df["AsesorNombresApellidos"].apply(
+            TransformerDimAsesor._alias_asesor
+        )
+
+        # 2. Detectamos qué alias se están repitiendo en el DataFrame
+        duplicados = df.duplicated(subset=["Asesor"], keep=False)
+
+        # 3. Si hay duplicados, les agregamos un número correlativo
+        if duplicados.any():
+            # groupby().cumcount() enumera los grupos: 0, 1, 2... Le sumamos 1 para que empiece en 1.
+            correlativo = df.groupby("Asesor").cumcount() + 1
+            df.loc[duplicados, "Asesor"] = (
+                df.loc[duplicados, "Asesor"] + " " + correlativo.astype(str)
+            )
+
+        return df
 
     @staticmethod
     def _run_participantes(df: pd.DataFrame) -> pd.DataFrame:
         df = df.copy()
-        df['Participante'] = df['IdSAsesor'].isin(PARTICIPANTES)
+        df["Participante"] = df["IdSAsesor"].isin(PARTICIPANTES)
         return df
-
 
     @staticmethod
     def run(df: pd.DataFrame) -> pd.DataFrame:
@@ -53,12 +72,14 @@ class TransformerDimAsesor(Transformer):
 
 # Factory
 
+
 class TypeTable(Enum):
-    dim_asesor = 'dim_asesor'
+    dim_asesor = "dim_asesor"
+
 
 class TransformerFactory:
     @staticmethod
-    def get_transformer(type_table: Literal['dim_asesor']) -> Transformer:
+    def get_transformer(type_table: Literal["dim_asesor"]) -> Transformer:
         try:
             type_table = TypeTable(type_table)
         except ValueError:
@@ -68,7 +89,7 @@ class TransformerFactory:
             return TransformerDimAsesor()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     df = Extractor.run(constants.SQL.STRATEGIC.DIM_ASESOR)
     transformer = TransformerDimAsesor()
     df_transformed = transformer.run(df)

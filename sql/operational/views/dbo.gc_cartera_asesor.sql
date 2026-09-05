@@ -41,7 +41,7 @@ WHERE
     AND T_PRE.SALDO_PRES > 0          
     AND T_USU.ID_USER NOT IN (
         'PRECASTIGO', 'RJULI6', 'RJULIACA', 'RLIMA7', 'RQUILLA3', 'RSICUA4',
-        'LHR5', 'HTEJ5', 'TKPN5', 'GHVJ5', 'OTA5', 'SDHF5', 'CMN5', 'HQND5'
+        'LHR5', 'HTEJ5', 'TKPN5', 'GHVJ5', 'OTA5', 'SDHF5', 'CMN5', 'HQND5', 'RTRES'
     )
 GROUP BY
     T_ANA.ID_USER,

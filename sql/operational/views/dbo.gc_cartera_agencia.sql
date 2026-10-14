@@ -26,7 +26,10 @@ SELECT
 
     SUM(T_PRE.SALDO_PRES) AS CarteraInicial,
     0.10 AS MetaMoraCPP,         
-    0.02 AS MetaMoraDeficiente   
+    CASE 
+        WHEN '{PERIODO}' >= '202610' THEN 0.023 
+        ELSE 0.02
+    END AS MetaMoraDeficiente
 
 FROM PREEC T_PRE WITH (NOLOCK)
 INNER JOIN SEGURIDAD.DBO.ANAREC T_ANA WITH (NOLOCK)

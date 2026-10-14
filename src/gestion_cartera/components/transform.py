@@ -1,3 +1,5 @@
+# transform.py
+
 from abc import ABC, abstractmethod
 import pandas as pd
 from enum import Enum
@@ -38,23 +40,9 @@ class TransformerDimAsesor(Transformer):
     @staticmethod
     def _run_alias_asesor(df: pd.DataFrame) -> pd.DataFrame:
         df = df.copy()
-
-        # 1. Creamos el alias base ("Cesar PC")
         df["Asesor"] = df["AsesorNombresApellidos"].apply(
             TransformerDimAsesor._alias_asesor
         )
-
-        # 2. Detectamos qué alias se están repitiendo en el DataFrame
-        duplicados = df.duplicated(subset=["Asesor"], keep=False)
-
-        # 3. Si hay duplicados, les agregamos un número correlativo
-        if duplicados.any():
-            # groupby().cumcount() enumera los grupos: 0, 1, 2... Le sumamos 1 para que empiece en 1.
-            correlativo = df.groupby("Asesor").cumcount() + 1
-            df.loc[duplicados, "Asesor"] = (
-                df.loc[duplicados, "Asesor"] + " " + correlativo.astype(str)
-            )
-
         return df
 
     @staticmethod

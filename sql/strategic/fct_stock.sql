@@ -1,25 +1,12 @@
 WITH
-CTE_ASESOR AS (
-SELECT * FROM gc_dim_asesor_cpp 
-)
-,
-CTE_CARTERA_MORAS AS (
-SELECT * FROM gc_cartera_moras_cpp
-)
-,
-CTE_DURACION AS (
-SELECT * FROM gc_duracion_cpp
-)
-,
-CTE_TEA AS (
-SELECT * FROM gc_tea_cpp
-),
-CTE_SOCIOS AS (
-SELECT * FROM gc_socios_cpp
-)
+CTE_ASESOR AS ( SELECT * FROM gc_dim_asesor_cpp ),
+CTE_CARTERA_MORAS AS ( SELECT * FROM gc_cartera_moras_cpp ),
+CTE_DURACION AS ( SELECT * FROM gc_duracion_cpp ),
+CTE_TEA AS ( SELECT * FROM gc_tea_cpp ),
+CTE_SOCIOS AS ( SELECT * FROM gc_socios_cpp )
 SELECT
     T_CAR.Periodo,
-	T_ASE.IdSAgencia,
+    T_ASE.IdSAgencia,
     T_CAR.IdSAsesor,
     T_CAR.Cartera,
     T_CAR.Mora9,
@@ -28,22 +15,16 @@ SELECT
     ISNULL(T_DUR.Varios, 0) AS Varios,
     ISNULL(T_TEA.TEA, 0) AS TEA,
     T_SOC.NroSocios,
-    T_SOC.NroSociosAnterior
-FROM
-	CTE_ASESOR T_ASE
-	INNER JOIN CTE_CARTERA_MORAS T_CAR
-		ON  T_CAR.IdSAsesor = T_ASE.IdSAsesor
-    LEFT JOIN CTE_DURACION T_DUR
-        ON  T_DUR.Periodo = T_CAR.Periodo
-        AND T_DUR.IdSAsesor = T_CAR.IdSAsesor
-    LEFT JOIN CTE_TEA T_TEA
-        ON  T_TEA.Periodo = T_CAR.Periodo
-        AND T_TEA.IdSAsesor = T_CAR.IdSAsesor
-    LEFT JOIN CTE_SOCIOS T_SOC
-        ON  T_SOC.Periodo = T_CAR.Periodo
-        AND T_SOC.IdSAsesor = T_CAR.IdSAsesor
-ORDER BY
-    T_CAR.Periodo ASC,
-    T_ASE.IdSAgencia ASC,
-    T_CAR.IdSAsesor ASC
-;
+    T_SOC.NroSociosAnterior,
+    ISNULL(T_SOC.NroSociosMantenidos, 0) AS NroSociosMantenidos,
+    ISNULL(T_SOC.NroSociosCancelados, 0) AS NroSociosCancelados,
+    ISNULL(T_SOC.NroSociosRecuperacion, 0) AS NroSociosRecuperacion,
+    ISNULL(T_SOC.NroSociosTraspasados, 0) AS NroSociosTraspasados,
+    -- El nuevo campo listo para Power BI
+    ISNULL(T_SOC.NroSociosActivos, 0) AS NroSociosActivos
+FROM CTE_ASESOR T_ASE
+INNER JOIN CTE_CARTERA_MORAS T_CAR ON T_CAR.IdSAsesor = T_ASE.IdSAsesor
+LEFT JOIN CTE_DURACION T_DUR ON T_DUR.Periodo = T_CAR.Periodo AND T_DUR.IdSAsesor = T_CAR.IdSAsesor
+LEFT JOIN CTE_TEA T_TEA ON T_TEA.Periodo = T_CAR.Periodo AND T_TEA.IdSAsesor = T_CAR.IdSAsesor
+LEFT JOIN CTE_SOCIOS T_SOC ON T_SOC.Periodo = T_CAR.Periodo AND T_SOC.IdSAsesor = T_CAR.IdSAsesor
+ORDER BY T_CAR.Periodo ASC, T_ASE.IdSAgencia ASC, T_CAR.IdSAsesor ASC;

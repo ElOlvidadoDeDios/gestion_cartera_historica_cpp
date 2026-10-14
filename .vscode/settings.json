@@ -14,7 +14,8 @@
         "sideBar.border": "#cae6d5",
         "commandCenter.foreground": "#15202b",
         "statusBar.debuggingBackground": "#a8d5ba",
-        "statusBar.debuggingForeground": "#15202b"
+        "statusBar.debuggingForeground": "#15202b",
+        "statusBar.inactiveBackground": "#a8d5ba"
     },
     "peacock.color": "#A8D5BA"
 }

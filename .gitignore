@@ -13,3 +13,6 @@ backup/
 *.xlsx
 *.bak
 ejecucion.log
+ejecucion_diaria.log
+estado_vistas.txt
+plazos_fijos_vigentes.pbix
